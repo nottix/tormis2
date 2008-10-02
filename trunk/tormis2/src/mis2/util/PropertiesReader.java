@@ -39,8 +39,11 @@ public class PropertiesReader {
 		return null;
 	}
 	
-	public static float getValue(String id) {
+	public static float getFloatValue(String id) {
 		return Float.parseFloat(getProperty(id));
 	}
-
+	
+	public static int getIntValue(String id) {
+		return Integer.parseInt(getProperty(id));
+	}
 }
