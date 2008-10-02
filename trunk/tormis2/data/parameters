@@ -1,0 +1,24 @@
+#Numero utenti
+N = 30
+
+#Tempi di servizio
+Ts1 = 12
+Ts2 = 0.8
+Ts3 = 0.8
+Ts4 = 0.8
+Ts5 = 0.8
+Ts6 = 0.3
+Ts7 = 1.5
+Ts8 = 0.3
+
+#Capacità
+B2 = 5
+B3 = 5
+B4 = 5
+B5 = 5
+B6 = 5
+B7 = 5
+B8 = 5
+
+#Tipo servente
+S7 = 3
