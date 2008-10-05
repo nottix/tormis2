@@ -2,7 +2,7 @@
 M = 8
 
 #Numero utenti
-N = 30
+N = 6
 
 #Tempi di servizio
 Ts1 = 12
@@ -15,6 +15,7 @@ Ts7 = 1.5
 Ts8 = 0.3
 
 #Capacità
+B1 = 0
 B2 = 5
 B3 = 5
 B4 = 5
@@ -24,4 +25,21 @@ B7 = 5
 B8 = 5
 
 #Tipo servente
+S1 = 1
+S2 = 1
+S3 = 1
+S4 = 1
+S5 = 1
+S6 = 1
 S7 = 3
+S8 = 1
+
+#Tipo blocco
+C1 = RS-RD
+C2 = BBS-SO
+C3 = BBS-SO
+C4 = BBS-SO
+C5 = BBS-SO
+C6 = RS-RD
+C7 = BBS-SO
+C8 = RS-RD
