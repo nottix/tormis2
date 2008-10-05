@@ -1,19 +1,34 @@
 package mis2.simulation;
 
 import mis2.util.*;
+import mis2.states.*;
 
 public class SimulationController {
 	
-	public SimulationController() {
-		RoutingMatrixReader routing = new RoutingMatrixReader(RoutingMatrixReader.path);
-		routing.printRoutingMatrix();
+	public SimulationController(int numJobs) {
+		int N = ParametersContainer.getN();
+		int M = ParametersContainer.getM();
+		StatesGenerator states = new StatesGenerator(M, numJobs);
+		states.calcStates();
+		states.printStatesDisp();
+		//states.filterRsRd();
+		System.out.println("Filter");
+		states.printStates();
 	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		SimulationController sim = new SimulationController();
+		RoutingMatrixReader routing = new RoutingMatrixReader(RoutingMatrixReader.path);
+		routing.printRoutingMatrix();
+		ParametersContainer.loadParameters();
+		SimulationController sim;
+		for(int i=1; i<=ParametersContainer.getN(); i++) {
+			System.out.println("Job: "+i);
+			sim = new SimulationController(i);
+		}
+		
 
 	}
 
