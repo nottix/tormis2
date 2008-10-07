@@ -5,10 +5,10 @@ import mis2.states.*;
 
 public class SimulationController {
 	
-	public SimulationController(int numJobs) {
+	public SimulationController(int numJobs, RoutingMatrixReader routing) {
 		int N = ParametersContainer.getN();
 		int M = ParametersContainer.getM();
-		StatesGenerator states = new StatesGenerator(M, numJobs);
+		StatesGenerator states = new StatesGenerator(M, numJobs, routing);
 		states.calcStates();
 		states.printStatesDisp();
 		//states.filterRsRd();
@@ -26,7 +26,7 @@ public class SimulationController {
 		SimulationController sim;
 		for(int i=1; i<=ParametersContainer.getN(); i++) {
 			System.out.println("Job: "+i);
-			sim = new SimulationController(i);
+			sim = new SimulationController(i, routing);
 		}
 		
 

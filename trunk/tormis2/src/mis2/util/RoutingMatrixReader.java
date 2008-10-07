@@ -1,6 +1,7 @@
 package mis2.util;
 
 import java.io.*;
+import java.util.Vector;
 import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
 
@@ -67,5 +68,15 @@ public class RoutingMatrixReader {
 	
 	public Matrix getRoutingMatrix() {
 		return this.routingMatrix;
+	}
+	
+	public Vector<Double> getDest(int i) {
+		Vector<Double> set = new Vector<Double>();
+		Double val = null;
+		for(int j=0; j<this.routingMatrix.numColumns(); j++) {
+			if((val=this.routingMatrix.get(i, j))>0)
+				set.add(val);
+		}
+		return set;
 	}
 }
