@@ -15,9 +15,15 @@ public class BbsState {
 	 * @param n
 	 * @param dim
 	 */
-	public BbsState(int n, int i, Vector<Double> dest) {
+	public BbsState(int n, Vector<Double> dest) {
 		this.dest = dest;
-		state = new int[Math.min(ParametersContainer.getServer(i), dest.size()+1)];
+//		System.out.println("Size: "+Math.min(ParametersContainer.getServer(i), dest.size()+1));
+//		state = new int[Math.min(ParametersContainer.getServer(i), dest.size()+1)+1];
+		//System.out.println("Size: "+(dest.size()+1));
+		if(dest==null)
+			state = new int[1];
+		else
+			state = new int[(dest.size()+1)];
 		state[0] = n;
 		index = 1;
 	}
@@ -31,8 +37,15 @@ public class BbsState {
 	}
 	
 	public void addNS(int ns) {
+		//System.out.println("Add: "+ns+" at "+index+", size: "+(state.length-1));
 		this.state[index] = ns;
 		index++;
+	}
+	
+	public void reset() {
+		for(int i=1; i<state.length; i++)
+			state[i] = 0;
+		index=1;
 	}
 	
 //	public void setState(int n, int ns) {
@@ -54,5 +67,16 @@ public class BbsState {
 	
 	public int getNS(int i) {
 		return state[i+1];
+	}
+	
+	public String printNS() {
+		String out = "[";
+		for(int i=1; i<state.length; i++) {
+			out += state[i];
+			if(i<state.length-1)
+				out += ", ";
+		}
+		out += "]";
+		return out;
 	}
 }

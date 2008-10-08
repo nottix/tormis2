@@ -10,7 +10,7 @@ public class SimulationController {
 		int M = ParametersContainer.getM();
 		StatesGenerator states = new StatesGenerator(M, numJobs, routing);
 		states.calcStates();
-		states.printStatesDisp();
+//		states.printStatesDisp();
 		//states.filterRsRd();
 		System.out.println("Filter");
 		states.printStates();
