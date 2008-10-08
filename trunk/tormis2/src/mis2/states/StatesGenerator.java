@@ -128,7 +128,7 @@ public class StatesGenerator {
 	}
 	
 	
-	public int calcBlockStates(Vector[] dispStates) {
+	public Vector<BbsState[]> calcBlockStates(Vector[] dispStates) {
 		
 		BbsState[] state;
 		boolean valid = true;
@@ -138,9 +138,9 @@ public class StatesGenerator {
 			state = new BbsState[M];
 			for(int j=0; j<dispStates.length; j++) {
 				if(block[j]==0)
-					state[j] = new BbsState((Integer)dispStates[j].get(i), routing.getDest(j));
+					state[j] = new BbsState((Integer)dispStates[j].get(i), routing.getDest(j), j);
 				else
-					state[j] = new BbsState((Integer)dispStates[j].get(i), null);
+					state[j] = new BbsState((Integer)dispStates[j].get(i), routing.getDest(j), j);
 				//System.out.print("i: "+i+", state["+j+"]: "+state[j].getNum()+", ");
 			}
 			System.out.println();
@@ -167,7 +167,7 @@ public class StatesGenerator {
 			valid=true;
 		}
 		
-		return 0;
+		return this.states;
 	}
 	
 	private Vector<BbsState[]> genBbsStates(BbsState[] state) {
@@ -181,13 +181,13 @@ public class StatesGenerator {
 			if(block[i]==0 && state[i].getNum()>0) {
 				min = Math.min(state[i].getNum(), server[i]);
 				numGen = this.calcNumStates(min, state[i].getDest().size());
-				System.out.println("Num: "+min+", NS: "+state[i].getDest().size()+", Comb: "+numGen);
+				//System.out.println("Num: "+min+", NS: "+state[i].getDest().size()+", Comb: "+numGen);
 				//this.statesDisp = null;
 				states = this.calcStatesDisp(numGen, state[i].getDest().size(), min);
-				System.out.println("States len: "+states.length);
+				//System.out.println("States len: "+states.length);
 				for(int k=0; k<states[0].size(); k++) {
 					clone = state.clone();
-					clone[i] = new BbsState(state[i].getNum(), state[i].getDest());
+					clone[i] = new BbsState(state[i].getNum(), state[i].getDest(), i);
 					for(int j=0; j<states.length; j++) {
 						clone[i].addNS((Integer)states[j].get(k));
 					}
@@ -212,19 +212,19 @@ public class StatesGenerator {
 		return ret;
 	}
 	
-	public void printStates() {
-		for(int i=0; i<this.states.size(); i++) {
-			for(int j=0; j<((BbsState[])this.states.get(i)).length; j++) {
+	public void printStates(Vector<BbsState[]> states) {
+		for(int i=0; i<states.size(); i++) {
+			for(int j=0; j<((BbsState[])states.get(i)).length; j++) {
 				//System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
-				System.out.print("<"+((BbsState[])this.states.get(i))[j].getNum()+", "+((BbsState[])this.states.get(i))[j].printNS()+">   ");
+				System.out.print("<"+((BbsState[])states.get(i))[j].getNum()+", "+((BbsState[])states.get(i))[j].printNS()+">   ");
 			}
 			System.out.println();
 		}
 	}
 	
-	public void calcStates() {
+	public Vector<BbsState[]> calcStates() {
 		Vector[] vec = calcStatesDisp(numStates, M, numJobs);
 		//this.printStatesDisp();
-		calcBlockStates(vec);
+		return calcBlockStates(vec);
 	}
 }

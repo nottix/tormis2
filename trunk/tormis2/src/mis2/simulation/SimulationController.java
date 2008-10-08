@@ -1,19 +1,24 @@
 package mis2.simulation;
 
+import java.util.Vector;
+
 import mis2.util.*;
 import mis2.states.*;
+import mis2.markov.*;
 
 public class SimulationController {
 	
 	public SimulationController(int numJobs, RoutingMatrixReader routing) {
 		int N = ParametersContainer.getN();
 		int M = ParametersContainer.getM();
-		StatesGenerator states = new StatesGenerator(M, numJobs, routing);
-		states.calcStates();
+		StatesGenerator statesG = new StatesGenerator(M, numJobs, routing);
 //		states.printStatesDisp();
 		//states.filterRsRd();
+		Vector<BbsState[]> states = statesG.calcStates();
 		System.out.println("Filter");
-		states.printStates();
+		statesG.printStates(states);
+		QMatrixGenerator q = new QMatrixGenerator(states);
+		q.calcQMatrix();
 	}
 
 	/**

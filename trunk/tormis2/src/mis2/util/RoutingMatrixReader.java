@@ -70,12 +70,12 @@ public class RoutingMatrixReader {
 		return this.routingMatrix;
 	}
 	
-	public Vector<Double> getDest(int i) {
-		Vector<Double> set = new Vector<Double>();
+	public Vector<Integer> getDest(int i) {
+		Vector<Integer> set = new Vector<Integer>();
 		Double val = null;
 		for(int j=0; j<this.routingMatrix.numColumns(); j++) {
 			if((val=this.routingMatrix.get(i, j))>0)
-				set.add(val);
+				set.add((Integer)j);
 		}
 		return set;
 	}
