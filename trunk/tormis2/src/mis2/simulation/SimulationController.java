@@ -17,8 +17,9 @@ public class SimulationController {
 		Vector<BbsState[]> states = statesG.calcStates();
 		System.out.println("Filter");
 		statesG.printStates(states);
-		QMatrixGenerator q = new QMatrixGenerator(states);
+		QMatrixGenerator q = new QMatrixGenerator(states, routing.getRoutingMatrix());
 		q.calcQMatrix();
+		q.printQMatrix();
 	}
 
 	/**
