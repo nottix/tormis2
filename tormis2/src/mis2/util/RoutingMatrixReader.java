@@ -11,14 +11,14 @@ public class RoutingMatrixReader {
 	
 	private int M;
 	
-	private float[][] routingMatrixRaw;
+	private double[][] routingMatrixRaw;
 	private Matrix routingMatrix;
 	
 	public RoutingMatrixReader(String path) {
 		try {
 			BufferedInputStream buf = new BufferedInputStream( new FileInputStream(path) );
 			M = PropertiesReader.getIntValue("M");
-			routingMatrixRaw = new float[M][M];
+			routingMatrixRaw = new double[M][M];
 			routingMatrix = new FlexCompRowMatrix(M, M);
 			char ch;
 			int val;
@@ -27,14 +27,14 @@ public class RoutingMatrixReader {
 			while((val=buf.read()) > 0) {
 				ch = (char)val;
 				if(ch=='\n') {
-					routingMatrixRaw[x][y] = Float.parseFloat(num);
+					routingMatrixRaw[x][y] = Double.parseDouble(num);
 					routingMatrix.set(x, y, Double.parseDouble(num));
 					num = "";
 					y=0;
 					x++;
 				}
 				else if(ch=='\t') {
-					routingMatrixRaw[x][y] = Float.parseFloat(num);
+					routingMatrixRaw[x][y] = Double.parseDouble(num);
 					routingMatrix.set(x, y, Double.parseDouble(num));
 					num = "";
 					y++;
