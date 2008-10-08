@@ -7,7 +7,8 @@ public class BbsState {
 
 	private int[] state;
 	private int index;
-	private Vector<Double> dest;
+	private Vector<Integer> dest;
+	private int i;
 	
 	/**
 	 * <n, <NSi1, NSi2, ..., NSik>>
@@ -15,12 +16,13 @@ public class BbsState {
 	 * @param n
 	 * @param dim
 	 */
-	public BbsState(int n, Vector<Double> dest) {
+	public BbsState(int n, Vector<Integer> dest, int i) {
+		this.i = i;
 		this.dest = dest;
 //		System.out.println("Size: "+Math.min(ParametersContainer.getServer(i), dest.size()+1));
 //		state = new int[Math.min(ParametersContainer.getServer(i), dest.size()+1)+1];
 		//System.out.println("Size: "+(dest.size()+1));
-		if(dest==null)
+		if(ParametersContainer.getBlock(i)==1)
 			state = new int[1];
 		else
 			state = new int[(dest.size()+1)];
@@ -28,11 +30,11 @@ public class BbsState {
 		index = 1;
 	}
 	
-	public Vector<Double> getDest() {
+	public Vector<Integer> getDest() {
 		return this.dest;
 	}
 	
-	public double getDestAt(int k) {
+	public int getDestAt(int k) {
 		return this.dest.get(k);
 	}
 	
@@ -53,6 +55,11 @@ public class BbsState {
 //		state[1] = ns;
 //	}
 //	
+	public int getNsSize() {
+		return this.state.length-1;
+		//return index;
+	}
+	
 	public void setNum(int num) {
 		this.state[0] = num;
 	}
@@ -66,6 +73,10 @@ public class BbsState {
 	}
 	
 	public int getNS(int i) {
+		if(i+1>=state.length) {
+			System.out.println("SFORATO i+1: "+(i+1)+", size: "+state.length);
+			return -1;
+		}
 		return state[i+1];
 	}
 	
