@@ -10,7 +10,7 @@ public class StatesGenerator {
 	
 	private RoutingMatrixReader routing;
 	private FlexCompRowMatrix statesMatrix;
-	private Vector[] statesDisp;
+	//private Vector[] statesDisp;
 	private Vector<BbsState[]> states;
 	
 	private int numStates;
@@ -22,7 +22,7 @@ public class StatesGenerator {
 	
 	public StatesGenerator(int num_centri, int num_job, RoutingMatrixReader routing) {
 		this.routing = routing;
-		this.states = new Vector();
+		this.states = new Vector<BbsState[]>();
 		this.M = num_centri;
 		this.numJobs = num_job;
 		this.numStates = this.calcNumStates(numJobs, M);
@@ -75,7 +75,7 @@ public class StatesGenerator {
 				ret_matrix[0].add(numJobs-i);
 				ret_matrix[1].add(i);
 			}
-			this.statesDisp = ret_matrix;
+			//this.statesDisp = ret_matrix;
 			return ret_matrix; 
 		}
 		else if(numCenter >= 3) {
@@ -99,19 +99,19 @@ public class StatesGenerator {
 			}
 		}
 		
-		this.statesDisp = ret_matrix;
+		//this.statesDisp = ret_matrix;
 
 		return ret_matrix;
 	}
 	
-	public void printStatesDisp() {
-		for(int i=0; i<this.statesDisp.length; i++) {
-			for(int j=0; j<this.statesDisp[i].size(); j++) {
-				System.out.print(this.statesDisp[i].get(j)+" ");
-			}
-			System.out.println();
-		}
-	}
+//	public void printStatesDisp() {
+//		for(int i=0; i<this.statesDisp.length; i++) {
+//			for(int j=0; j<this.statesDisp[i].size(); j++) {
+//				System.out.print(this.statesDisp[i].get(j)+" ");
+//			}
+//			System.out.println();
+//		}
+//	}
 	
 	private int getMinPopulation(int index) {
 		int totalCap = 0;
@@ -128,17 +128,22 @@ public class StatesGenerator {
 	}
 	
 	
-	public int calcBlockStates() {
+	public int calcBlockStates(Vector[] dispStates) {
 		
-		BbsState[] state, state1, state2, state3;
+		BbsState[] state;
 		boolean valid = true;
 		
-		for(int i=0; i<this.statesDisp[0].size(); i++) {
+		System.out.println("dispStates size: "+dispStates[0].size());
+		for(int i=0; i<dispStates[0].size(); i++) {
 			state = new BbsState[M];
-			for(int j=0; j<this.statesDisp.length; j++) {
-				
-				state[j] = new BbsState((Integer)this.statesDisp[j].get(i), j, routing.getDest(j));
+			for(int j=0; j<dispStates.length; j++) {
+				if(block[j]==0)
+					state[j] = new BbsState((Integer)dispStates[j].get(i), routing.getDest(j));
+				else
+					state[j] = new BbsState((Integer)dispStates[j].get(i), null);
+				//System.out.print("i: "+i+", state["+j+"]: "+state[j].getNum()+", ");
 			}
+			System.out.println();
 			
 			for(int k=0; k<block.length && valid; k++) {
 				//if(block[k]==1) { //RS-RD
@@ -150,39 +155,15 @@ public class StatesGenerator {
 				}
 			}
 			if(valid) {
-				this.genBbsStates(state);
+				this.states.addAll(this.genBbsStates(state));
 			}
-//
-//				int k=0;
-//				if(state[k].getNum()>0) {
-//					state[k].setNs(2);
-//					this.states.add(state);
-//
-//					state1 = state.clone();
-//					state1[k].setNs(3);
-//					this.states.add(state1);
-//a
-//					state2 = state.clone();
-//					state2[k].setNs(4);
-//					this.states.add(state2);
-//
-//					state3 = state.clone();
-//					state3[k].setNs(5);
-//					this.states.add(state3);
-//				}
-//				else {
-//					this.states.add(state);
-//				}
-//
-//			}
-//			else {
-//				System.out.println("State "+i);
-//				for(int y=0; y<state.length; y++) {
-//					System.out.print("Num: "+state[y].getNum()+", Ns: "+state[y].getNs()+" - ");
-//				}
-//				System.out.println("INVALID");
-//			}
-			
+			else {
+				System.out.println("State "+i);
+				for(int y=0; y<state.length; y++) {
+					System.out.print("Num: "+state[y].getNum()+", Ns: "+state[y].printNS()+" - ");
+				}
+				System.out.println("INVALID");
+			}
 			valid=true;
 		}
 		
@@ -191,19 +172,42 @@ public class StatesGenerator {
 	
 	private Vector<BbsState[]> genBbsStates(BbsState[] state) {
 		Vector<BbsState[]> ret = new Vector<BbsState[]>();
+		Vector[] states;
+		BbsState[] clone;
 		int numGen, min;
+		boolean added = false;
 		
 		for(int i=0; i<state.length; i++) {
 			if(block[i]==0 && state[i].getNum()>0) {
 				min = Math.min(state[i].getNum(), server[i]);
 				numGen = this.calcNumStates(min, state[i].getDest().size());
 				System.out.println("Num: "+min+", NS: "+state[i].getDest().size()+", Comb: "+numGen);
-				this.statesDisp = null;
-				this.calcStatesDisp(numGen, state[i].getDest().size(), min);
-				this.printStatesDisp();
+				//this.statesDisp = null;
+				states = this.calcStatesDisp(numGen, state[i].getDest().size(), min);
+				System.out.println("States len: "+states.length);
+				for(int k=0; k<states[0].size(); k++) {
+					clone = state.clone();
+					clone[i] = new BbsState(state[i].getNum(), state[i].getDest());
+					for(int j=0; j<states.length; j++) {
+						clone[i].addNS((Integer)states[j].get(k));
+					}
+					ret.add(clone);
+					added = true;
+				}
+				//this.printStatesDisp();
+				//this.printStates();
 			}
 		}
+		if(!added)
+			ret.add(state);
 		
+		for(int i=0; i<ret.size(); i++) {
+			for(int j=0; j<((BbsState[])ret.get(i)).length; j++) {
+				//System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
+				System.out.print("<"+((BbsState[])ret.get(i))[j].getNum()+", "+((BbsState[])ret.get(i))[j].printNS()+">   ");
+			}
+			System.out.println();
+		}
 		
 		return ret;
 	}
@@ -212,14 +216,15 @@ public class StatesGenerator {
 		for(int i=0; i<this.states.size(); i++) {
 			for(int j=0; j<((BbsState[])this.states.get(i)).length; j++) {
 				//System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
-				//System.out.print("<"+((BbsState[])this.states.get(i))[j].getNum()+", "+((BbsState[])this.states.get(i))[j].getNs()+">   ");
+				System.out.print("<"+((BbsState[])this.states.get(i))[j].getNum()+", "+((BbsState[])this.states.get(i))[j].printNS()+">   ");
 			}
 			System.out.println();
 		}
 	}
 	
 	public void calcStates() {
-		calcStatesDisp(numStates, M, numJobs);
-		calcBlockStates();
+		Vector[] vec = calcStatesDisp(numStates, M, numJobs);
+		//this.printStatesDisp();
+		calcBlockStates(vec);
 	}
 }
