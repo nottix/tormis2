@@ -44,6 +44,14 @@ public class BbsState {
 		index++;
 	}
 	
+	public int getNSof(int from, int to) {
+		for(int k=0; k<this.dest.size(); k++) {
+			if(this.dest.get(k).equals(to))
+				return this.getNS(k);
+		}
+		return -1;
+	}
+	
 	public void reset() {
 		for(int i=1; i<state.length; i++)
 			state[i] = 0;
