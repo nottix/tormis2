@@ -57,8 +57,8 @@ public class QMatrixGenerator {
 		return serviceRate;
 	}
 	
-	public void calcQMatrix() {
-		int rows = states.size()*states.size();
+	public Matrix calcQMatrix() {
+		int rows = states.size();
 		int columns = rows;
 		this.qMatrix = new FlexCompRowMatrix(rows, columns);
 		int cond2 = 0;
@@ -68,8 +68,8 @@ public class QMatrixGenerator {
 		int condDiag = 0;
 		int condZero = 0;
 		double diag = 0;
-		for(int j=0; j<states.size(); j++) {
-			for(int i=0; i<states.size(); i++) {
+		for(int i=0; i<states.size(); i++) {
+			for(int j=0; j<states.size(); j++) {
 				if(i==j) {
 					
 				}
@@ -105,7 +105,7 @@ public class QMatrixGenerator {
 			}
 		}
 		System.out.println("Total: "+states.size()*states.size()+", Cond1: "+cond1+", Cond2: "+cond2+", Cond3: "+cond3+", Cond4: "+cond4+", CondZero: "+condZero+", CondDiag: "+condDiag);
-			
+		return this.qMatrix;	
 	}
 	
 	private boolean checkRsRdCondition1(BbsState[] from, BbsState[] to, int x, int y) {
@@ -142,7 +142,7 @@ public class QMatrixGenerator {
 							if( (to[j].getNum()==from[j].getNum()-1) && (to[i].getNum()==from[i].getNum()+1) ) {
 								for(int x=0; x<(to[i].getNsSize()); x++) {
 									if( (to[i].getNS(x) == (from[i].getNS(x)+1)) ) {
-										qMatrix.set(xx, yy, this.getDelta(from[j].getNum())*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, i)*this.routingMatrix.get(i, x));
+										qMatrix.set(xx, yy, this.getDelta(from[j].getNum())*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, i)*this.routingMatrix.get(i, from[i].getDestAt(x)));
 										return true;
 									}
 								}
@@ -191,10 +191,10 @@ public class QMatrixGenerator {
 							if( ((block[i]==0) && (from[i].getNum()>=server[i])) || block[i]==1) {
 								if( (to[j].getNum()==from[j].getNum()-1) && (to[i].getNum()==from[i].getNum()+1) ) {
 									for(int x=0; x<(to[i].getNsSize()); x++) {
-										if( (to[i].getNS(x) == (from[i].getNS(x)+1)) ) {
+										if( (to[j].getNS(x) == (from[j].getNS(x)+1)) ) {
 											int ns = from[j].getNSof(j, i);
 											if(ns>=0) {
-												qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, x)*this.isAccepted(from[i].getNum(), i));
+												qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, from[j].getDestAt(x))*this.isAccepted(from[i].getNum(), i));
 												return true;
 											}
 										}
