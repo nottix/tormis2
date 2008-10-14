@@ -8,6 +8,7 @@ public class ParametersContainer {
 	private static int[] capacity = null;
 	private static int[] server = null;
 	private static int[] block = null;
+	private static double[] serviceRate = null;
 	
 	public static void loadParameters() {
 		N = PropertiesReader.getIntValue("N");
@@ -28,6 +29,10 @@ public class ParametersContainer {
 			else
 				block[i] = 0;
 		}
+		serviceRate = new double[ts.length];
+		for(int i=0; i<serviceRate.length; i++) {
+			serviceRate[i] = 1/ts[i];
+		}
 	}
 	
 	public static int getN() {
@@ -42,7 +47,6 @@ public class ParametersContainer {
 		return ts[i];
 	}
 	
-	
 	public static int getCapacity(int i) {
 		return capacity[i];
 	}
@@ -53,6 +57,14 @@ public class ParametersContainer {
 	
 	public static int getBlock(int i) {
 		return block[i];
+	}
+	
+	public static double[] getServiceRate() {
+		return serviceRate;
+	}
+	
+	public static double getServiceRate(int i) {
+		return serviceRate[i];
 	}
 	
 	public static double[] getTs() {
