@@ -24,7 +24,7 @@ public class QMatrixGenerator {
 		this.capacity = ParametersContainer.getCapacity();
 		this.server = ParametersContainer.getServer();
 		this.ts = ParametersContainer.getTs();
-		this.serviceRate = this.calcServiceRate();
+		this.serviceRate = ParametersContainer.getServiceRate();
 		this.routingMatrix = routingMatrix;
 	}
 	
@@ -47,14 +47,6 @@ public class QMatrixGenerator {
 			return 0;
 		else
 			return 1;
-	}
-	
-	private double[] calcServiceRate() {
-		serviceRate = new double[ts.length];
-		for(int i=0; i<serviceRate.length; i++) {
-			serviceRate[i] = 1/ts[i];
-		}
-		return serviceRate;
 	}
 	
 	public Matrix calcQMatrix() {
