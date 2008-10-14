@@ -104,14 +104,14 @@ public class StatesGenerator {
 		return ret_matrix;
 	}
 	
-//	public void printStatesDisp() {
-//		for(int i=0; i<this.statesDisp.length; i++) {
-//			for(int j=0; j<this.statesDisp[i].size(); j++) {
-//				System.out.print(this.statesDisp[i].get(j)+" ");
-//			}
-//			System.out.println();
-//		}
-//	}
+	public void printStatesDisp(Vector[] state) {
+		for(int i=0; i<state[0].size(); i++) {
+			for(int j=0; j<state.length; j++) {
+				System.out.print(state[j].get(i)+" ");
+			}
+			System.out.println();
+		}
+	}
 	
 	private int getMinPopulation(int index) {
 		int totalCap = 0;
@@ -223,8 +223,9 @@ public class StatesGenerator {
 	}
 	
 	public Vector<BbsState[]> calcStates() {
-		Vector[] vec = calcStatesDisp(numStates, M, numJobs);
-		//this.printStatesDisp();
+		Vector[] vec = calcStatesDisp(numStates, M, 30);//numJobs);
+		this.printStatesDisp(vec);
+                System.exit(0);
 		return calcBlockStates(vec);
 	}
 }
