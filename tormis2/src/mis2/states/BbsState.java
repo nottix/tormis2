@@ -9,6 +9,7 @@ public class BbsState {
 	private int index;
 	private Vector<Integer> dest;
 	private int iNode;
+	private int[] capacity;
 	
 	/**
 	 * <n, [NSi1, NSi2, ..., NSiR]>
@@ -22,6 +23,7 @@ public class BbsState {
          * 
 	 */
 	public BbsState(int n, Vector<Integer> dest, int iNode) {
+		this.capacity = ParametersContainer.getCapacity();
 		this.iNode = iNode;
 		this.dest = dest;
 //		System.out.println("Size: "+Math.min(ParametersContainer.getServer(iNode), dest.size()+1));
@@ -91,6 +93,16 @@ public class BbsState {
 			return -1;
 		}
 		return state[iNode+1];
+	}
+	
+	public boolean isBlocked() {
+		for(int k=0; k<this.dest.size(); k++) {
+			if(this.getNum() > capacity[this.dest.get(k)]) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public String printNS() {
