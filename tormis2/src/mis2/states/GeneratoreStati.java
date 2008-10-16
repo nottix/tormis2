@@ -1,4 +1,4 @@
-package Progetto_MIS2.States;
+package mis2.states;
 /**
  * @(#)GeneratoreStati.java
  *
@@ -22,8 +22,8 @@ public class GeneratoreStati {
      * @param n Valore di cui ci vuole calcolare il fattoriale.
      * @return fattoriale del numero
      */
-    private float factorial(float n){
-            if(n==0.0) return 1.0F;
+    private static double factorial(double n){
+            if(n==0.0) return 1.0;
             else return n * factorial(n-1);
     }
     
@@ -34,9 +34,9 @@ public class GeneratoreStati {
      * @param M Numero di centri(nodi) della rete
      * @return Il numero di stati globali della rete senza blocco.
      */
-    private Double calcola_num_stati(float N, float M){
-            float numeratore = factorial(N+M-1.0F);
-            float denominatore = factorial(M-1.0F) * factorial(N); 
+    private static Double calcola_num_stati(double N, double M){
+            double numeratore = factorial(N+M-1.0);
+            double denominatore = factorial(M-1.0) * factorial(N); 
             Double ret = new Double(numeratore / denominatore);
             if(ret-ret.intValue() > 0.5){ret = ret+1.0;}
             return ret;
@@ -52,7 +52,7 @@ public class GeneratoreStati {
      * @param num_job numero di job della rete
      * @return vettore con gli stati della rete.
      */
-    private Vector[] calcola_stati(int num_stati, int num_centri, int num_job){
+    private static Vector[] calcola_stati(int num_stati, int num_centri, int num_job){
 
             int i, j, k, num_sub_stati;
 
@@ -74,7 +74,7 @@ public class GeneratoreStati {
                     }
 
                     for(i=1; i<=num_job; i++){
-                            num_sub_stati = calcola_num_stati(new Float(i), new Float(num_centri-1)).intValue();
+                            num_sub_stati = calcola_num_stati(new Double(i), new Double(num_centri-1)).intValue();
                             Vector[] tmp_matrix = new Vector[num_centri-1];
                             tmp_matrix = calcola_stati(num_sub_stati, num_centri-1, i);
                             
@@ -98,9 +98,9 @@ public class GeneratoreStati {
      * @param num_centri numero di centri della rete
      * @return vettore con gli stati calcolati
      */
-    public Vector[] getStati(int num_job, int num_centri){
+    public static Vector[] getStati(int num_job, int num_centri){
 
-	int num_stati = calcola_num_stati((float)num_job, (float)num_centri).intValue();
+	int num_stati = calcola_num_stati((double)num_job, (double)num_centri).intValue();
         
         Vector[] matrix = new Vector[num_centri];
 
