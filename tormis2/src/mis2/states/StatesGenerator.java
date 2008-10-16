@@ -197,9 +197,11 @@ public class StatesGenerator {
         
         private int[] getState(int index, Vector[] states) {
         
-                int[] ret = new int[this.M];
+                int[] ret = new int[states.length];
                 
-                for(int i=0; i<this.M; i++){
+                System.out.println("states size: " + states[0].size() + 
+                        " length: " + states.length + " index: " + index);
+                for(int i=0; i<states.length; i++){
                     ret[i] = (Integer)states[i].elementAt(index);
                 }
                 
@@ -239,7 +241,7 @@ public class StatesGenerator {
         }
         
         private boolean min(int a, int b) {
-                return a<=b;
+                return (a<=b);
         }
         
         private BbsState[] initBBS() {
@@ -251,14 +253,59 @@ public class StatesGenerator {
                 return bbs;
         }
         
-        public Vector<BbsState[]> calcBlockStates(Vector[] states) {
+        private boolean isJobInBBS(BbsState[] bbs, int iNode) {
+        
+                return (bbs[iNode].getNum() > 0);
+                
+        }
+        
+        private int[][] generateCombinationBBS(int numServ, BbsState bbs) {
+        
+                int N_tmp = Math.min(numServ, bbs.getNum());
+                int M_tmp = bbs.getDest().size();
+                
+                int numState = this.calcNumStates(new Double(N_tmp), 
+                                                new Double(M_tmp)).intValue();
+                Vector[] comb = this.calcStatesDisp(numState, M_tmp, N_tmp);
+                
+                System.out.println("comb size: " + comb[0].size() + 
+                        " M: " + M_tmp);
+                int[][] ret = new int[comb[0].size()][M_tmp];
+                for(int i=0; i<comb[0].size(); i++){
+                    ret[i] = this.getState(i, comb);
+                }
+                return ret;
+                
+        }
+        
+        private void addNewStatesSingleServ(Vector<BbsState[]> states, int iNode) {
+            
+                for(int i=0; i<states.size(); i++)
+                {
+                    if(this.isJobInBBS(states.elementAt(i), iNode)){
+                        BbsState[] bbs = states.elementAt(i);
+                    }
+                }
+        }
+        
+        private Vector<BbsState[]> calcBlockStates(Vector[] states) {
         
                 Vector<BbsState[]> ret = new Vector<BbsState[]>();
                 Vector[] statesB = filterB(states);
                 BbsState[] bbs = this.initBBS();
                 
                 for(int i=0; i<statesB[0].size(); i++) {
-                    
+                    int[] tmp = this.getState(i, states);
+                    for(int j=0; j<this.M; j++){
+                        bbs[j].setNum(tmp[j]);
+                    }
+                    ret.add(bbs);
+                }
+                
+                for(int k=0; k<this.M; k++){
+                    if(this.block[k] == 0){ // Se il centro è BBS
+                        this.addNewStatesSingleServ(ret, k);
+                    }
                 }
                 
                 return ret;
@@ -282,6 +329,11 @@ public class StatesGenerator {
 			System.out.println();
 		}
 	}
+        
+        private void clearVector(Vector[] v) {
+                for(int i=0; i<this.M; i++)
+                    v[i].clear();
+        }
 	
 	public Vector<BbsState[]> calcStates() {
 		Vector[] vec = calcStatesDisp(numStates, M, 30);//numJobs);
@@ -294,11 +346,29 @@ public class StatesGenerator {
                 int jobs = 30;
                 int nodes = 8;
                 StatesGenerator sg = new StatesGenerator(nodes, jobs, null);
-                int n_states = sg.calcNumStates(jobs, nodes).intValue();
-                Vector[] states = sg.calcStatesDisp(n_states, nodes, jobs);
-                System.out.println("Dim states: " + n_states);
-                Vector[] statesB = sg.filterB(states);
-                System.out.println("Dim statesB: " + statesB[0].size());
-                sg.printStatesDisp(statesB);
+//                int n_states = sg.calcNumStates(jobs, nodes).intValue();
+//                Vector[] states = sg.calcStatesDisp(n_states, nodes, jobs);
+//                System.out.println("Dim states: " + n_states);
+//                Vector[] statesB = sg.filterB(states);
+//                sg.clearVector(states);
+//                System.out.println("Dim statesB: " + statesB[0].size());
+//                sg.printStatesDisp(statesB);
+                Vector<Integer> set = new Vector<Integer>();
+                set.add(6);
+                set.add(7);
+                set.add(6);
+                set.add(7);
+                set.add(6);
+                set.add(7);
+                BbsState bbs = new BbsState(0, set, 6);
+                int[][] p = sg.generateCombinationBBS(3, bbs);
+                System.out.println("pr: " + p.length + " pc: " + p[0].length);
+                for(int i=0; i<p.length; i++){
+                    for(int j=0; j<p[i].length; j++){
+                        System.out.print(p[i][j] + " ");
+                    }
+                    System.out.println();
+                }
+                    
         }
 }

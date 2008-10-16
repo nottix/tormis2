@@ -29,10 +29,11 @@ public class BbsState {
 //		System.out.println("Size: "+Math.min(ParametersContainer.getServer(iNode), dest.size()+1));
 //		state = new int[Math.min(ParametersContainer.getServer(iNode), dest.size()+1)+1];
 		//System.out.println("Size: "+(dest.size()+1));
-		if(ParametersContainer.getBlock(iNode)==1)
-			state = new int[1];
-		else
-			state = new int[(dest.size()+1)];
+//		if(ParametersContainer.getBlock(iNode)==1)
+//			state = new int[1];
+//		else
+//			state = new int[(dest.size()+1)];
+                    state = new int[(dest.size()+1)];
 		state[0] = n;
 		index = 1;
 	}
