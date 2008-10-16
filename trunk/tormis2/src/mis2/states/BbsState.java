@@ -1,6 +1,8 @@
 package mis2.states;
 
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mis2.util.*;
 
 public class BbsState {
@@ -29,11 +31,11 @@ public class BbsState {
 //		System.out.println("Size: "+Math.min(ParametersContainer.getServer(iNode), dest.size()+1));
 //		state = new int[Math.min(ParametersContainer.getServer(iNode), dest.size()+1)+1];
 		//System.out.println("Size: "+(dest.size()+1));
-//		if(ParametersContainer.getBlock(iNode)==1)
-//			state = new int[1];
-//		else
-//			state = new int[(dest.size()+1)];
-                    state = new int[(dest.size()+1)];
+		if(ParametersContainer.getBlock(iNode)==1)
+			state = new int[1];
+		else
+			state = new int[(dest.size()+1)];
+//                    state = new int[(dest.size()+1)];
 		state[0] = n;
 		index = 1;
 	}
@@ -51,6 +53,21 @@ public class BbsState {
 		this.state[index] = ns;
 		index++;
 	}
+        
+        public void setNS(int ns, int index) {
+                if(index > this.state.length)
+                    System.out.println("Errore - index setNS() errato!!");
+                this.state[index] = ns;
+        }
+        
+        public void setState(int[] state) {
+            this.state = state;
+            this.index = state.length;
+        }
+        
+        public int[] getState() {
+            return this.state.clone();
+        }
 	
 	public int getNSof(int from, int to) {
 		for(int k=0; k<this.dest.size(); k++) {
@@ -105,6 +122,10 @@ public class BbsState {
 		
 		return false;
 	}
+        
+        public int getINode() {
+                return this.iNode;
+        }
 	
 	public String printNS() {
 		String out = "[";
