@@ -12,17 +12,17 @@ public class BbsState {
 	private Vector<Integer> dest;
 	private int iNode;
 	private int[] capacity;
-	
+
 	/**
 	 * <n, [NSi1, NSi2, ..., NSiR]>
 	 *  
-         *      R - min(Ki, dest.size()+1)
-         *      Ki - # server centro
-         *      Sum(Nsi) == min(n, Ki);
-         * 
+	 *      R - min(Ki, dest.size()+1)
+	 *      Ki - # server centro
+	 *      Sum(Nsi) == min(n, Ki);
+	 * 
 	 * @param n
 	 * @param dim
-         * 
+	 * 
 	 */
 	public BbsState(int n, Vector<Integer> dest, int iNode) {
 		this.capacity = ParametersContainer.getCapacity();
@@ -35,40 +35,38 @@ public class BbsState {
 			state = new int[1];
 		else
 			state = new int[(dest.size()+1)];
-//                    state = new int[(dest.size()+1)];
 		state[0] = n;
 		index = 1;
 	}
-	
+
 	public Vector<Integer> getDest() {
 		return this.dest;
 	}
-	
+
 	public int getDestAt(int k) {
 		return this.dest.get(k);
 	}
-	
+
 	public void addNS(int ns) {
-		//System.out.println("Add: "+ns+" at "+index+", size: "+(state.length-1));
 		this.state[index] = ns;
 		index++;
 	}
-        
-        public void setNS(int ns, int index) {
-                if(index > this.state.length)
-                    System.out.println("Errore - index setNS() errato!!");
-                this.state[index] = ns;
-        }
-        
-        public void setState(int[] state) {
-            this.state = state;
-            this.index = state.length;
-        }
-        
-        public int[] getState() {
-            return this.state.clone();
-        }
-	
+
+	public void setNS(int ns, int index) {
+		if(index > this.state.length)
+			System.out.println("Errore - index setNS() errato!!");
+		this.state[index] = ns;
+	}
+
+	public void setState(int[] state) {
+		this.state = state;
+		this.index = state.length;
+	}
+
+	public int[] getState() {
+		return this.state.clone();
+	}
+
 	public int getNSof(int from, int to) {
 		for(int k=0; k<this.dest.size(); k++) {
 			if(this.dest.get(k).equals(to))
@@ -76,35 +74,25 @@ public class BbsState {
 		}
 		return -1;
 	}
-	
+
 	public void reset() {
 		for(int iNode=1; iNode<state.length; iNode++)
 			state[iNode] = 0;
 		index=1;
 	}
-	
-//	public void setState(int n, int ns) {
-//		state[0] = n;
-//		state[1] = ns;
-//	}
-//	
+
 	public int getNsSize() {
 		return this.state.length-1;
-		//return index;
 	}
-	
+
 	public void setNum(int num) {
 		this.state[0] = num;
 	}
-//	
-//	public void setNs(int ns) {
-//		this.state[1] = ns;
-//	}
-//	
+
 	public int getNum() {
 		return state[0];
 	}
-	
+
 	public int getNS(int iNode) {
 		if(iNode+1>=state.length) {
 			System.out.println("SFORATO iNode+1: "+(iNode+1)+", size: "+state.length);
@@ -112,22 +100,22 @@ public class BbsState {
 		}
 		return state[iNode+1];
 	}
-	
+
 	public boolean isBlocked() {
 		for(int k=0; k<this.dest.size(); k++) {
 			if(this.getNum() > capacity[this.dest.get(k)]) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-        
-        public int getINode() {
-                return this.iNode;
-        }
-	
-	public String printNS() {
+
+	public int getINode() {
+		return this.iNode;
+	}
+
+	public String toString() {
 		String out = "[";
 		for(int iNode=1; iNode<state.length; iNode++) {
 			out += state[iNode];

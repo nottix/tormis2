@@ -18,19 +18,20 @@ public class SimulationController {
 	public SimulationController(int numJobs, RoutingMatrixReader routing) {
 		int N = ParametersContainer.getN();
 		int M = ParametersContainer.getM();
-		StatesGenerator statesG = new StatesGenerator(M, numJobs, routing);
-//		states.printStatesDisp();
-		//states.filterRsRd();
-		Vector<BbsState[]> states = statesG.calcStates();
-		System.out.println("Filter");
-		statesG.printStates(states);
+		
+		StatesGenerator statesGen = new StatesGenerator(M, numJobs, routing);
+		System.out.println("States:");
+		Vector<BbsState[]> states = statesGen.calcStates();
+		statesGen.printStates(states);
+		
 		QMatrixGenerator q = new QMatrixGenerator(states, routing.getRoutingMatrix());
 		Matrix qMatrix = q.calcQMatrix();
+		
 		StateProbability prob = new StateProbability(qMatrix);
 		DenseVector x = prob.calcPi();
+		
 		q.printQMatrix();
 		prob.printX(x);
-		
 	}
 
 	/**
@@ -40,13 +41,11 @@ public class SimulationController {
 		RoutingMatrixReader routing = new RoutingMatrixReader(RoutingMatrixReader.path);
 		routing.printRoutingMatrix();
 		ParametersContainer.loadParameters();
-		SimulationController sim;
+		SimulationController sim = null;
 		for(int i=1; i<=ParametersContainer.getN(); i++) {
 			System.out.println("Job: "+i);
 			sim = new SimulationController(i, routing);
 		}
-		
-
 	}
 
 }
