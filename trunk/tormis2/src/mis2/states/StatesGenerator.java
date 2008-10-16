@@ -220,19 +220,18 @@ public class StatesGenerator {
         }
         
         private Vector[] filterB(Vector[] states) {
-        
-                Vector[] ret = states;
+         
+                Vector[] ret = new Vector[this.M];
+                for(int r=0; r<this.M; r++)
+                    ret[r] = new Vector();
                 
                 for(int i=0; i<states[0].size(); i++){
                 
                     int tmp[] = this.getState(i, states);
-                    if( (tmp[0]==0&&tmp[1]==0&&tmp[2]==0) 
-                            || this.checkOverB(tmp)){
-                        //System.out.println("Rimozione elemento - " + i);
+                    if( !(this.checkOverB(tmp)) ){
                         for(int j=0; j<this.M; j++){
-                            ret[j].removeElementAt(i);
+                            ret[j].add(states[j].elementAt(i));
                         }
-                        i--;
                     }
                 }
                 
@@ -300,6 +299,6 @@ public class StatesGenerator {
                 System.out.println("Dim states: " + n_states);
                 Vector[] statesB = sg.filterB(states);
                 System.out.println("Dim statesB: " + statesB[0].size());
-                //sg.printStatesDisp(statesB);
+                sg.printStatesDisp(statesB);
         }
 }
