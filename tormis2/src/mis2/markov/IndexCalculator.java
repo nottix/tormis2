@@ -14,9 +14,11 @@ public class IndexCalculator {
 	private int numJobs;
 	private double[] serviceRate;
 	private int[] block;
+	private int[] capacity;
 	
 	public IndexCalculator(int numJobs, Vector<BbsState[]> states, DenseVector pi) {
 		this.server = ParametersContainer.getServer();
+		this.capacity = ParametersContainer.getCapacity();
 		this.serviceRate = ParametersContainer.getServiceRate();
 		this.block = ParametersContainer.getBlock();
 		this.numJobs = numJobs;
@@ -24,10 +26,25 @@ public class IndexCalculator {
 		this.pi = pi;
 	}
 	
-	public double calcP(int i, int k) {
+	public double calcPi(int i, int k) {
+		double total = 0;
+//		for(int j=0; j<states.size(); j++) {
+//			if(states.get(j)[i].getNum() == k) {
+//				total += pi.get(j);
+//			}
+//		}
+		for(int j=0; j<states.size(); j++) {
+			if(this.calcPiCond(i, j, k)) {
+				total += pi.get(j);
+			}
+		}
+		return total;
+	}
+	
+	public double calcZeta(int i, int k, int z) {
 		double total = 0;
 		for(int j=0; j<states.size(); j++) {
-			if(states.get(j)[i].getNum() == k) {
+			if(this.calcZetaCond(i, j, k, z)) {
 				total += pi.get(j);
 			}
 		}
@@ -59,34 +76,46 @@ public class IndexCalculator {
 	 * 
 	 * @return
 	 */
-	private boolean calcZetaCond(int i, int indexState, int num) {
-		int zeta = Math.min(num, this.server[i]);
+	private boolean calcZetaCond(int i, int indexState, int num, int z) {
 		if(this.block[i]==1) { //RS-RD
-			return this.states.get(indexState)[i].getNum() == num;
+			return (this.states.get(indexState)[i].getNum() == num) && (z == Math.min(num, server[i]));
 		}
 		else if(this.block[i]==0) { //BBS-SO
 			if(this.states.get(indexState)[i].isBlocked() && (num==this.states.get(indexState)[i].getNum())) {
-				return true;
+				int totalNs = 0;
+				for(int k=0; k<this.states.get(indexState)[i].getDest().size(); k++) {
+					if(this.states.get(indexState)[k].getNum() < capacity[k]) {
+						totalNs += this.states.get(indexState)[i].getNS(k);
+					}
+					totalNs += this.states.get(indexState)[i].getNS(0);
+				}
+				if(z == totalNs) {
+					return true;
+				}
 			}
 		}
 		
 		return false;
 	}
 	
+	
+	
+	//-----------------------------//
+	
 	public double calcUsageOf(int i) {
 		double total = 0;
 		if(this.server[i]==1) {
 			for(int j=1; j<=numJobs; j++) {
-				total += this.calcP(i, j);
+				total += this.calcPi(i, j);
 			}
 		}
 		else if(this.server[i]>1) {
 			for(int j=1; j<=(this.server[i]-1); j++) {
-				total += j*this.calcP(i, j);
+				total += j*this.calcPi(i, j);
 			}
 			total += (1/this.server[i]);
 			for(int j=this.server[i]; j<=numJobs; j++) {
-				total += this.calcP(i, j);
+				total += this.calcPi(i, j);
 			}
 		}
 		return total;
@@ -106,7 +135,7 @@ public class IndexCalculator {
 	public double calcMeanPopOf(int i) {
 		double total = 0;
 		for(int j=1; j<=numJobs; j++) {
-			total += j*this.calcP(i, j);
+			total += j*this.calcPi(i, j);
 		}
 		return total;
 	}
