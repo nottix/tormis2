@@ -8,7 +8,7 @@ import mis2.util.*;
 
 public class StatesGenerator {
 	
-	private RoutingMatrixReader routing;
+        private RoutingMatrixReader routing;
 	private FlexCompRowMatrix statesMatrix;
 	//private Vector[] statesDisp;
 	private Vector<BbsState[]> states;
@@ -16,20 +16,22 @@ public class StatesGenerator {
 	private int numStates;
 	private int M;
 	private int numJobs;
-	private int[] block;    /*  0 - BBS, 
+	private int[] block={1,0,0,0,0,1,0,1};    /*  0 - BBS, 
                                     1 - RS_RD */
 	private int[] capacity={0,5,5,5,5,5,5,5}; /* Capacità coda (0 - infinita)*/
-	private int[] server;   /* Num servernti x centro */
+	private int[] server={1,1,1,1,1,1,3,1};   /* Num servernti x centro */
+            
 	
 	public StatesGenerator(int num_centri, int num_job, RoutingMatrixReader routing) {
-		this.routing = routing;
+		//this.routing = routing;
+                    this.routing = new RoutingMatrixReader(RoutingMatrixReader.path);
 		this.states = new Vector<BbsState[]>();
 		this.M = num_centri;
 		this.numJobs = num_job;
 		this.numStates = this.calcNumStates((double)numJobs, (double)M).intValue();
-		this.block = ParametersContainer.getBlock();
+		//this.block = ParametersContainer.getBlock();
 		//this.capacity = ParametersContainer.getCapacity();
-		this.server = ParametersContainer.getServer();
+		//this.server = ParametersContainer.getServer();
 	}
 	
 	private double factorial(double n){
@@ -199,8 +201,8 @@ public class StatesGenerator {
         
                 int[] ret = new int[states.length];
                 
-                System.out.println("states size: " + states[0].size() + 
-                        " length: " + states.length + " index: " + index);
+//                System.out.println("states size: " + states[0].size() + 
+//                        " length: " + states.length + " index: " + index);
                 for(int i=0; i<states.length; i++){
                     ret[i] = (Integer)states[i].elementAt(index);
                 }
@@ -268,8 +270,8 @@ public class StatesGenerator {
                                                 new Double(M_tmp)).intValue();
                 Vector[] comb = this.calcStatesDisp(numState, M_tmp, N_tmp);
                 
-                System.out.println("comb size: " + comb[0].size() + 
-                        " M: " + M_tmp);
+//                System.out.println("comb size: " + comb[0].size() + 
+//                        " M: " + M_tmp);
                 int[][] ret = new int[comb[0].size()][M_tmp];
                 for(int i=0; i<comb[0].size(); i++){
                     ret[i] = this.getState(i, comb);
@@ -278,14 +280,36 @@ public class StatesGenerator {
                 
         }
         
-        private void addNewStatesSingleServ(Vector<BbsState[]> states, int iNode) {
+        private void addNewStates(Vector<BbsState[]> states, int iNode) {
             
                 for(int i=0; i<states.size(); i++)
                 {
                     if(this.isJobInBBS(states.elementAt(i), iNode)){
-                        BbsState[] bbs = states.elementAt(i);
+                        BbsState[] bbs = this.cloneBBSState(states.elementAt(i));
+                        states.removeElementAt(i);
+                        int[][] tmp = this.generateCombinationBBS(this.server[iNode], bbs[iNode]);
+                        for(int j=0; j<tmp.length; j++){
+                            BbsState[] bbsc = this.cloneBBSState(bbs);
+                            for(int k=0; k<tmp[j].length; k++){
+                                bbsc[iNode].setNS(tmp[j][k], k+1);
+                            }
+                            states.add(i, bbsc);
+                            i++;
+                        }
+                        i--;
                     }
                 }
+        }
+        
+        private BbsState[] cloneBBSState(BbsState[] orig) {
+                
+                BbsState[] ret = new BbsState[orig.length];
+                for(int i=0; i<ret.length; i++){
+                    ret[i] = new BbsState(orig[i].getNum(), orig[i].getDest(),
+                                orig[i].getINode());
+                    ret[i].setState(orig[i].getState());
+                }
+                return ret;
         }
         
         private Vector<BbsState[]> calcBlockStates(Vector[] states) {
@@ -295,16 +319,20 @@ public class StatesGenerator {
                 BbsState[] bbs = this.initBBS();
                 
                 for(int i=0; i<statesB[0].size(); i++) {
+                    BbsState[] bbsc = this.cloneBBSState(bbs);
                     int[] tmp = this.getState(i, states);
+                    
                     for(int j=0; j<this.M; j++){
-                        bbs[j].setNum(tmp[j]);
+                        bbsc[j].setNum(tmp[j]);
+//                        System.out.print(bbs[j].getNum() + " ");
                     }
-                    ret.add(bbs);
+                    ret.add(bbsc);
+//                    System.out.println();
                 }
                 
                 for(int k=0; k<this.M; k++){
                     if(this.block[k] == 0){ // Se il centro è BBS
-                        this.addNewStatesSingleServ(ret, k);
+                        this.addNewStates(ret, k);
                     }
                 }
                 
@@ -323,12 +351,26 @@ public class StatesGenerator {
 	public void printStates(Vector<BbsState[]> states) {
 		for(int i=0; i<states.size(); i++) {
 			for(int j=0; j<((BbsState[])states.get(i)).length; j++) {
-				//System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
-				System.out.print("<"+((BbsState[])states.get(i))[j].getNum()+", "+((BbsState[])states.get(i))[j].printNS()+">   ");
+                            //System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
+                            System.out.print("<"+
+                                    ((BbsState[])states.get(i))[j].getNum()+
+                                    ", "+((BbsState[])states.get(i))[j].printNS()+
+                                    ">   ");
 			}
 			System.out.println();
 		}
 	}
+        
+        public void printTmp(Vector<BbsState[]> states) {
+        
+                for(int i=0; i<states.size(); i++){
+                    for(int j=0; j<this.M; j++){
+                        BbsState[] bbs = states.elementAt(i);
+                        System.out.print(bbs[j].getNum() + " ");
+                    }
+                    System.out.println();
+                }
+        }
         
         private void clearVector(Vector[] v) {
                 for(int i=0; i<this.M; i++)
@@ -345,30 +387,18 @@ public class StatesGenerator {
         
                 int jobs = 30;
                 int nodes = 8;
+                ParametersContainer.loadParameters();
                 StatesGenerator sg = new StatesGenerator(nodes, jobs, null);
-//                int n_states = sg.calcNumStates(jobs, nodes).intValue();
-//                Vector[] states = sg.calcStatesDisp(n_states, nodes, jobs);
-//                System.out.println("Dim states: " + n_states);
-//                Vector[] statesB = sg.filterB(states);
-//                sg.clearVector(states);
-//                System.out.println("Dim statesB: " + statesB[0].size());
-//                sg.printStatesDisp(statesB);
-                Vector<Integer> set = new Vector<Integer>();
-                set.add(6);
-                set.add(7);
-                set.add(6);
-                set.add(7);
-                set.add(6);
-                set.add(7);
-                BbsState bbs = new BbsState(0, set, 6);
-                int[][] p = sg.generateCombinationBBS(3, bbs);
-                System.out.println("pr: " + p.length + " pc: " + p[0].length);
-                for(int i=0; i<p.length; i++){
-                    for(int j=0; j<p[i].length; j++){
-                        System.out.print(p[i][j] + " ");
-                    }
-                    System.out.println();
-                }
-                    
+                int n_states = sg.calcNumStates(jobs, nodes).intValue();
+                Vector[] states = sg.calcStatesDisp(n_states, nodes, jobs);
+                System.out.println("Dim states: " + n_states);
+                Vector[] statesB = sg.filterB(states);
+                sg.clearVector(states);
+                System.out.println("Dim statesB: " + statesB[0].size());
+                //sg.printStatesDisp(statesB);
+                Vector<BbsState[]> vbbs = sg.calcBlockStates(statesB);
+                sg.clearVector(statesB);
+                System.out.println("Dim statesBBS: " + vbbs.size());
+                sg.printStates(vbbs);
         }
 }
