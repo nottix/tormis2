@@ -2,7 +2,8 @@ package mis2.markov;
 
 import java.util.Vector;
 import no.uib.cipr.matrix.DenseVector;
-
+import no.uib.cipr.matrix.Matrix;
+import mis2.util.*;
 import mis2.states.BbsState;
 import mis2.util.ParametersContainer;
 
@@ -12,11 +13,13 @@ public class IndexCalculator {
 	private Vector<BbsState[]> states;
 	private DenseVector pi;
 	private int numJobs;
+	private Matrix routingMatrix;
 	private double[] serviceRate;
 	private int[] block;
 	private int[] capacity;
 	
-	public IndexCalculator(int numJobs, Vector<BbsState[]> states, DenseVector pi) {
+	public IndexCalculator(int numJobs, Vector<BbsState[]> states, DenseVector pi, Matrix routingMatrix) {
+		this.routingMatrix = routingMatrix;
 		this.server = ParametersContainer.getServer();
 		this.capacity = ParametersContainer.getCapacity();
 		this.serviceRate = ParametersContainer.getServiceRate();
@@ -96,6 +99,48 @@ public class IndexCalculator {
 		}
 		
 		return false;
+	}
+	
+	
+	
+	//-----------------------------//
+	
+	public double calcUtilizationOf(int i) {
+		double utilization = 0;
+		
+		for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
+			utilization += (Math.min(n, server[i])/server[i])*this.calcPi(i, n);
+		}
+		
+		return utilization;
+	}
+	
+	public double calcEffectiveUtilizationOf(int i) {
+		double utilization = 0;
+		
+		if(block[i]==0) {
+			for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
+				for(int z=1; z<Math.min(n, server[i]); z++) {
+					utilization += (z/server[i])*this.calcZeta(i, n, z);
+				}
+			}
+		}
+		else if(block[i]==1) {
+			double nested = 0;
+			for(int k=1; k<Math.min(capacity[i], numJobs); k++) {
+				for(int j=0; j<this.states.size(); j++) {
+					if(this.states.get(j)[i].getNum() == k) {
+						for(int r=0; r<capacity.length; r++) {
+							if(this.states.get(j)[r].getNum() < capacity[j])
+								nested += this.pi.get(j)*this.routingMatrix.get(i, r);
+						}
+					}
+				}
+				utilization += (Math.min(k, server[i])/server[i])*nested;
+			}
+		}
+		
+		return utilization;
 	}
 	
 	
