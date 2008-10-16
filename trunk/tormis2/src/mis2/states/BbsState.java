@@ -8,21 +8,26 @@ public class BbsState {
 	private int[] state;
 	private int index;
 	private Vector<Integer> dest;
-	private int i;
+	private int iNode;
 	
 	/**
-	 * <n, <NSi1, NSi2, ..., NSik>>
-	 * 
+	 * <n, [NSi1, NSi2, ..., NSiR]>
+	 *  
+         *      R - min(Ki, dest.size()+1)
+         *      Ki - # server centro
+         *      Sum(Nsi) == min(n, Ki);
+         * 
 	 * @param n
 	 * @param dim
+         * 
 	 */
-	public BbsState(int n, Vector<Integer> dest, int i) {
-		this.i = i;
+	public BbsState(int n, Vector<Integer> dest, int iNode) {
+		this.iNode = iNode;
 		this.dest = dest;
-//		System.out.println("Size: "+Math.min(ParametersContainer.getServer(i), dest.size()+1));
-//		state = new int[Math.min(ParametersContainer.getServer(i), dest.size()+1)+1];
+//		System.out.println("Size: "+Math.min(ParametersContainer.getServer(iNode), dest.size()+1));
+//		state = new int[Math.min(ParametersContainer.getServer(iNode), dest.size()+1)+1];
 		//System.out.println("Size: "+(dest.size()+1));
-		if(ParametersContainer.getBlock(i)==1)
+		if(ParametersContainer.getBlock(iNode)==1)
 			state = new int[1];
 		else
 			state = new int[(dest.size()+1)];
@@ -53,8 +58,8 @@ public class BbsState {
 	}
 	
 	public void reset() {
-		for(int i=1; i<state.length; i++)
-			state[i] = 0;
+		for(int iNode=1; iNode<state.length; iNode++)
+			state[iNode] = 0;
 		index=1;
 	}
 	
@@ -80,19 +85,19 @@ public class BbsState {
 		return state[0];
 	}
 	
-	public int getNS(int i) {
-		if(i+1>=state.length) {
-			System.out.println("SFORATO i+1: "+(i+1)+", size: "+state.length);
+	public int getNS(int iNode) {
+		if(iNode+1>=state.length) {
+			System.out.println("SFORATO iNode+1: "+(iNode+1)+", size: "+state.length);
 			return -1;
 		}
-		return state[i+1];
+		return state[iNode+1];
 	}
 	
 	public String printNS() {
 		String out = "[";
-		for(int i=1; i<state.length; i++) {
-			out += state[i];
-			if(i<state.length-1)
+		for(int iNode=1; iNode<state.length; iNode++) {
+			out += state[iNode];
+			if(iNode<state.length-1)
 				out += ", ";
 		}
 		out += "]";

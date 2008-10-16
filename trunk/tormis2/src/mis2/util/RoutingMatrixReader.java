@@ -74,7 +74,7 @@ public class RoutingMatrixReader {
 		Vector<Integer> set = new Vector<Integer>();
 		Double val = null;
 		for(int j=0; j<this.routingMatrix.numColumns(); j++) {
-			if((val=this.routingMatrix.get(i, j))>0)
+			if((val=this.routingMatrix.get(i, j))>0.0)
 				set.add((Integer)j);
 		}
 		return set;
