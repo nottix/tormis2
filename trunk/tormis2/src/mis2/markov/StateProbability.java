@@ -23,9 +23,9 @@ public class StateProbability {
 		for(int j=0; j<dim; j++) {
 			qMatrix.set(qMatrix.numRows()-1, j, 1);
 		}
-		for(int i=0; i<dim; i++) {
-			this.qMatrix.set(dim-1, i, 1);
-		}
+//		for(int i=0; i<dim; i++) {
+//			this.qMatrix.set(dim-1, i, 1);
+//		}
 
 		DenseVector x, b;
 		x = new DenseVector(dim);
