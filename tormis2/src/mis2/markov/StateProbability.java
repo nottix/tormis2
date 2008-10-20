@@ -34,6 +34,7 @@ public class StateProbability {
 
 		IterativeSolver solver = new BiCGstab(b);
 		try {
+			//this.qMatrix = this.qMatrix.transpose();
 			solver.solve(this.qMatrix, b, x);
 		} catch (IterativeSolverNotConvergedException e) {
 			System.err.println("Iterative solver failed to converge");
