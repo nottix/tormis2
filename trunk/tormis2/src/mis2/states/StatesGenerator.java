@@ -250,7 +250,7 @@ public class StatesGenerator {
 
 		int N_tmp = Math.min(numServ, bbs.getNum());
 		int M_tmp = bbs.getDest().size();
-
+                
 		int numState = this.calcNumStates(new Double(N_tmp), 
 				new Double(M_tmp)).intValue();
 		Vector[] comb = this.calcStatesDisp(numState, M_tmp, N_tmp);
@@ -270,7 +270,9 @@ public class StatesGenerator {
 			if(states.elementAt(i)[iNode].getNum() > 0){
 				BbsState[] bbs = this.cloneState(states.elementAt(i));
 				states.removeElementAt(i);
+                                
 				int[][] tmp = this.genBbsCombinations(this.server[iNode], bbs[iNode]);
+                                
 				for(int j=0; j<tmp.length; j++){
 					BbsState[] bbsc = this.cloneState(bbs);
 					for(int k=0; k<tmp[j].length; k++){
@@ -288,7 +290,9 @@ public class StatesGenerator {
 
 		BbsState[] ret = new BbsState[orig.length];
 		for(int i=0; i<ret.length; i++){
-			ret[i] = new BbsState(orig[i].getNum(), orig[i].getDest(), orig[i].getINode());
+			ret[i] = new BbsState(orig[i].getNum(), 
+                                (Vector<Integer>)orig[i].getDest().clone(), 
+                                    orig[i].getINode());
 			ret[i].setState(orig[i].getState());
 		}
 		return ret;
@@ -309,13 +313,13 @@ public class StatesGenerator {
 			}
 			ret.add(bbsc);
 		}
-
+                
 		for(int k=0; k<this.M; k++){
 			if(this.block[k] == 0){ // Se il centro è BBS
 				this.addNewStates(ret, k);
 			}
 		}
-
+                
 		return ret;
 	}
 
@@ -347,6 +351,7 @@ public class StatesGenerator {
 		this.statesDisp = calcStatesDisp(numStates, M, numJobs);
 		this.printStatesDisp(this.statesDisp);
 		this.states = calcBlockStates(this.statesDisp); 
+                this.clearVectors(this.statesDisp);
 		return this.states;
 	}
 
