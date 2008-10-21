@@ -31,14 +31,22 @@ public class IndexCalculator {
 	
 	public double calcPi(int i, int k) {
 		double total = 0;
-//		for(int j=0; j<states.size(); j++) {
-//			if(states.get(j)[i].getNum() == k) {
-//				total += pi.get(j);
-//			}
-//		}
-		for(int j=0; j<states.size(); j++) {
-			if(this.calcPiCond(i, j, k)) {
-				total += pi.get(j);
+		if(capacity[i]==0) {
+//			System.out.println("cap 0");
+			for(int j=0; j<states.size(); j++) {
+				if(states.get(j)[i].getNum() == k) {
+					total += pi.get(j);
+				}
+			}
+		}
+		else {
+//			System.out.println("cap >0");
+			for(int j=0; j<states.size(); j++) {
+				if(this.calcPiCond(i, j, k)) {
+//					if(i==1)
+//						System.out.println("pi: "+pi.get(j));
+					total += pi.get(j);
+				}
 			}
 		}
 		return total;
@@ -111,13 +119,15 @@ public class IndexCalculator {
 	public double calcUtilizationOf(int i) {
 		double utilization = 0;
 		
-		if(i==0) {      // Senza blocco
+		if(capacity[i]==0) {      // Senza blocco
 			for(int j=1; j<=numJobs; j++) {
 				utilization += this.calcPi(i, j);
 			}
 		}
 		else {          // RS-RD, BBS
 			for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
+//				if(i==1)
+//					System.out.println("min: "+this.calcPi(i, n));
 				utilization += (Math.min(n, server[i])/server[i])*this.calcPi(i, n);
 			}
 		}
