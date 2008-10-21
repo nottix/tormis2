@@ -30,7 +30,7 @@ public class IndexCalculator {
 	}
 	
 	public double calcPi(int i, int k) {
-		double total = 0;
+		double total = 0.0;
 		if(capacity[i]==0) {
 //			System.out.println("cap 0");
 			for(int j=0; j<states.size(); j++) {
@@ -85,6 +85,7 @@ public class IndexCalculator {
 				return true;
 			}
 		}
+		//System.out.println("Condizione FALSA, "+indexState);
 		
 		return false;
 	}
@@ -105,9 +106,14 @@ public class IndexCalculator {
 					if(this.states.get(indexState)[k].getNum() < capacity[k]) {
 						totalNs += this.states.get(indexState)[i].getNS(k);
 					}
-					totalNs += this.states.get(indexState)[i].getNS(0);
 				}
+				totalNs += this.states.get(indexState)[i].getNS(0);
 				if(z == totalNs) {
+					return true;
+				}
+			}
+			else if((!this.states.get(indexState)[i].isBlocked()) && (num==this.states.get(indexState)[i].getNum())) {
+				if(z == Math.min(num, server[i])) {
 					return true;
 				}
 			}
@@ -170,9 +176,9 @@ public class IndexCalculator {
 		}
 		else {
 			for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
-				for(int z=1; z<Math.min(n, this.server[i]); z++) {
+				for(int z=1; z<=Math.min(n, this.server[i]); z++) {
 					if(n>0) {
-						throughput += this.serviceRate[i]*this.calcZeta(i, n, z);
+						throughput += ((double)this.serviceRate[i])*this.calcZeta(i, n, z);
 					}
 				}
 			}
@@ -203,10 +209,16 @@ public class IndexCalculator {
 		return throughput;
 	}
 	
+	/**
+	 * L
+	 * @param i
+	 * @return
+	 */
 	public double calcMeanQueueOf(int i) {
-		double meanQueue = 0;
+		double meanQueue = 0.0;
 		
 		for(int n=0; n<this.states.size(); n++) {
+			//System.out.println("mean: "+this.states.get(n)[i].getNum()+", Pi: "+this.calcPi(i, this.states.get(n)[i].getNum()));
 			meanQueue += this.states.get(n)[i].getNum()*this.calcPi(i, this.states.get(n)[i].getNum());
 		}
 		

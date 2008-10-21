@@ -22,12 +22,12 @@ public class SimulationController {
 		StatesGenerator statesGen = new StatesGenerator(M, numJobs, routing);
 		System.out.println("States:");
 		Vector<BbsState[]> states = statesGen.calcStates();
-		double total2 = 0;
-		for(int j=0; j<states.size(); j++) {
-			total2 += states.get(j)[1].getNum();
-		}
-		System.out.println("Total: "+total2);
-		statesGen.printStates(states);
+//		double total2 = 0;
+//		for(int j=0; j<states.size(); j++) {
+//			total2 += states.get(j)[1].getNum();
+//		}
+//		System.out.println("Total: "+total2);
+//		statesGen.printStates(states);
 		
 		QMatrixGenerator q = new QMatrixGenerator(states, routing.getRoutingMatrix());
 		Matrix qMatrix = q.calcQMatrix();
@@ -35,7 +35,7 @@ public class SimulationController {
 		StateProbability prob = new StateProbability(qMatrix);
 		DenseVector x = prob.calcPi();
 		
-		q.printQMatrix();
+		q.printZeroQMatrix();
 		prob.printX(x);
 		
 		IndexCalculator index = new IndexCalculator(numJobs, states, 
@@ -48,12 +48,12 @@ public class SimulationController {
 		for(int i=0; i<M; i++) {
                         System.out.println();
 			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
-//			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
-//			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
-//			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
+			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
+			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
+			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
 		}
-		System.out.println("\n\ttotal: "+total);
-                System.out.println();
+//		System.out.println("\n\ttotal: "+tIndexCalculatootal);
+//                System.out.println();
 		
 	}
 
