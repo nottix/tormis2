@@ -252,4 +252,21 @@ public class QMatrixGenerator {
 		}
 			
 	}
+	
+	public void printZeroQMatrix() {
+		boolean check = true;
+		for(int j=0; j<qMatrix.numRows(); j++) {
+			for(int i=0; i<qMatrix.numColumns(); i++) {
+				if(qMatrix.get(j, i)!=0){
+					check = false;
+				}
+			}
+			if(check) 
+				System.out.print("Riga vuota: "+j);
+			check = true;
+			System.out.println();
+
+		}
+			
+	}
 }
