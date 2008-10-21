@@ -33,19 +33,22 @@ public class SimulationController {
 		q.printQMatrix();
 		prob.printX(x);
 		
-		IndexCalculator index = new IndexCalculator(numJobs, states, x, routing.getRoutingMatrix());
+		IndexCalculator index = new IndexCalculator(numJobs, states, 
+                                                x, routing.getRoutingMatrix());
 		System.out.println();
 		double total = 0;
 		for(int i=0; i<x.size(); i++) {
 			total += x.get(i);
 		}
 		for(int i=0; i<M; i++) {
-			System.out.println("U"+i+": "+index.calcUtilizationOf(i));
-			System.out.println("X"+i+": "+index.calcThroughputOf(i));
-			System.out.println("L"+i+": "+index.calcMeanQueueOf(i));
-			System.out.println("T"+i+": "+index.calcMeanResponseTimeOf(i));
+                        System.out.println();
+			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
+			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
+			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
+			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
 		}
-		System.out.println("total: "+total);
+		System.out.println("\n\ttotal: "+total);
+                System.out.println();
 		
 	}
 
