@@ -104,12 +104,12 @@ public class IndexCalculator {
 	public double calcUtilizationOf(int i) {
 		double utilization = 0;
 		
-		if(i==0) {
+		if(i==0) {      // Senza blocco
 			for(int j=1; j<=numJobs; j++) {
 				utilization += this.calcPi(i, j);
 			}
 		}
-		else {
+		else {          // RS-RD, BBS
 			for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
 				utilization += (Math.min(n, server[i])/server[i])*this.calcPi(i, n);
 			}

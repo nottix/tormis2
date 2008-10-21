@@ -53,20 +53,19 @@ public class QMatrixGenerator {
 		int rows = states.size();
 		int columns = rows;
 		this.qMatrix = new FlexCompRowMatrix(rows, columns);
-		int cond2 = 0;
 		int cond1 = 0;
+                int cond2 = 0;
 		int cond3 = 0;
 		int cond4 = 0;
 		int cond5 = 0;
 		int condDiag = 0;
 		int condZero = 0;
 		double diag = 0;
-		for(int j=0; j<states.size(); j++) {
-			for(int i=0; i<states.size(); i++) {
-				if(i==j) {
-
-				}
-				else if(i==0 && j>0) {
+		for(int j=0; j<states.size(); j++) {               // j - righe
+			for(int i=0; i<states.size(); i++) {       // i - colon
+                            if(i!=j) {
+                                if(i==0 && j>0) {
+                                
 					diag = 0;
 					for(int k=0; k<states.size(); k++) {
 						if(k!=(j-1)) {
@@ -77,7 +76,8 @@ public class QMatrixGenerator {
 					this.qMatrix.set(j-1, j-1, diag);
 					condDiag++;
 				}
-				else if(this.checkRsRdCondition1(states.get(j), states.get(i), j, i)) {
+				
+                                if(this.checkRsRdCondition1(states.get(j), states.get(i), j, i)) {
 					cond1++;
 				}
 				else if(this.checkRsRdCondition2(states.get(j), states.get(i), j, i)) {
@@ -96,6 +96,7 @@ public class QMatrixGenerator {
 					qMatrix.set(j, i, 0);
 					condZero++;
 				}
+                             }
 			}
 		}
 		System.out.println("Total: "+states.size()*states.size()+", Cond1: "+cond1+", Cond2: "+cond2+", Cond3: "+cond3+", Cond4: "+cond4+", Cond5: "+cond5+", CondZero: "+condZero+", CondDiag: "+condDiag);

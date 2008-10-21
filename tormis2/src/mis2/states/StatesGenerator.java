@@ -350,22 +350,22 @@ public class StatesGenerator {
 		return this.states;
 	}
 
-	public static void main(String args[]) {
-
-		int jobs = 30;
-		int nodes = 8;
-		ParametersContainer.loadParameters();
-		StatesGenerator sg = new StatesGenerator(nodes, jobs, null);
-		int n_states = sg.calcNumStates(jobs, nodes).intValue();
-		Vector[] states = sg.calcStatesDisp(n_states, nodes, jobs);
-		System.out.println("Dim states: " + n_states);
-		Vector[] statesB = sg.filterB(states);
-		sg.clearVectors(states);
-		System.out.println("Dim statesB: " + statesB[0].size());
-		//sg.printStatesDisp(statesB);
-		Vector<BbsState[]> vbbs = sg.calcBlockStates(statesB);
-		sg.clearVectors(statesB);
-		System.out.println("Dim statesBBS: " + vbbs.size());
-		sg.printStates(vbbs);
-	}
+//	public static void main(String args[]) {
+//
+//		int jobs = 30;
+//		int nodes = 8;
+//		ParametersContainer.loadParameters();
+//		StatesGenerator sg = new StatesGenerator(nodes, jobs, null);
+//		int n_states = sg.calcNumStates(jobs, nodes).intValue();
+//		Vector[] states = sg.calcStatesDisp(n_states, nodes, jobs);
+//		System.out.println("Dim states: " + n_states);
+//		Vector[] statesB = sg.filterB(states);
+//		sg.clearVectors(states);
+//		System.out.println("Dim statesB: " + statesB[0].size());
+//		//sg.printStatesDisp(statesB);
+//		Vector<BbsState[]> vbbs = sg.calcBlockStates(statesB);
+//		sg.clearVectors(statesB);
+//		System.out.println("Dim statesBBS: " + vbbs.size());
+//		sg.printStates(vbbs);
+//	}
 }
