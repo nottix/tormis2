@@ -349,9 +349,9 @@ public class StatesGenerator {
 
 	public Vector<BbsState[]> calcStates() {
 		this.statesDisp = calcStatesDisp(numStates, M, numJobs);
-		this.printStatesDisp(this.statesDisp);
+//		this.printStatesDisp(this.statesDisp);
 		this.states = calcBlockStates(this.statesDisp); 
-                this.clearVectors(this.statesDisp);
+		this.clearVectors(this.statesDisp);
 		return this.states;
 	}
 
