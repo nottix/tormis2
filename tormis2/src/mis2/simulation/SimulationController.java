@@ -27,7 +27,7 @@ public class SimulationController {
 //			total2 += states.get(j)[1].getNum();
 //		}
 //		System.out.println("Total: "+total2);
-//		statesGen.printStates(states);
+		statesGen.printStates(states);
 		
 		QMatrixGenerator q = new QMatrixGenerator(states, routing.getRoutingMatrix());
 		Matrix qMatrix = q.calcQMatrix();
@@ -36,6 +36,7 @@ public class SimulationController {
 		DenseVector x = prob.calcPi();
 		
 		q.printZeroQMatrix();
+		q.printQMatrix();
 		prob.printX(x);
 		
 		IndexCalculator index = new IndexCalculator(numJobs, states, 
