@@ -43,9 +43,9 @@ public class SimulationController {
 		for(int i=0; i<M; i++) {
                         System.out.println();
 			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
-			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
-			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
-			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
+//			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
+//			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
+//			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
 		}
 		System.out.println("\n\ttotal: "+total);
                 System.out.println();
