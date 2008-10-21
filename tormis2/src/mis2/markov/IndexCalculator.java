@@ -126,9 +126,7 @@ public class IndexCalculator {
 		}
 		else {          // RS-RD, BBS
 			for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
-//				if(i==1)
-//					System.out.println("min: "+this.calcPi(i, n));
-				utilization += (Math.min(n, server[i])/server[i])*this.calcPi(i, n);
+				utilization += (((double)Math.min(n, server[i]))/((double)server[i]))*this.calcPi(i, n);
 			}
 		}
 		

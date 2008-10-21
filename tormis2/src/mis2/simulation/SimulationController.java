@@ -22,6 +22,11 @@ public class SimulationController {
 		StatesGenerator statesGen = new StatesGenerator(M, numJobs, routing);
 		System.out.println("States:");
 		Vector<BbsState[]> states = statesGen.calcStates();
+		double total2 = 0;
+		for(int j=0; j<states.size(); j++) {
+			total2 += states.get(j)[1].getNum();
+		}
+		System.out.println("Total: "+total2);
 		statesGen.printStates(states);
 		
 		QMatrixGenerator q = new QMatrixGenerator(states, routing.getRoutingMatrix());
