@@ -66,7 +66,14 @@ public class IndexCalculator {
 			return this.states.get(indexState)[i].getNum() == num;
 		}
 		else if(this.block[i]==0) { //BBS-SO
-			if(this.states.get(indexState)[i].isBlocked() && (num==this.states.get(indexState)[i].getNum())) {
+//                        System.out.println("\nCondizione BBS: blocked(" + 
+//                                this.states.get(indexState)[i].isBlocked() +
+//                                ") num(" + num + ") == numI(" + 
+//                                this.states.get(indexState)[i].getNum() + ")");
+			if( (this.states.get(indexState)[i].isBlocked() && 
+                            (num==this.states.get(indexState)[i].getNum())) ||
+                            ((!this.states.get(indexState)[i].isBlocked()) &&
+                            (num==this.states.get(indexState)[i].getNum()))) {
 				return true;
 			}
 		}
