@@ -2,7 +2,7 @@
 M = 8
 
 #Numero utenti
-N = 1
+N = 6
 
 #Tempi di servizio
 Ts1 = 12
