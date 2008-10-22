@@ -35,8 +35,9 @@ public class QMatrixGenerator {
 			return 0;
 	}
 
+        /* Formula di Pacini */
 	private int isAccepted(int n, int i) {
-		if(n<capacity[i])
+		if(n<=capacity[i])
 			return 1;
 		else
 			return 0;
@@ -80,29 +81,29 @@ public class QMatrixGenerator {
 					}
 
 					if(this.checkRsRdCondition1(states.get(j), states.get(i), j, i)) {
-                                                System.out.println("Condition RS-RD 1 " + " statoV: "+j+", statoN: "+i);
+//                                                System.out.println("Condition RS-RD 1 " + " statoV: "+j+", statoN: "+i);
 						cond1++;
 					}
 					else if(this.checkRsRdCondition2(states.get(j), states.get(i), j, i)) {
-                                                System.out.println("Condition RS-RD 2" + " statoV: "+j+", statoN: "+i);
+//                                                System.out.println("Condition RS-RD 2" + " statoV: "+j+", statoN: "+i);
 						cond2++;
 					}
 					else if(this.checkBbsCondition1(states.get(j), states.get(i), j, i)) {
 //						if(j==1)
 //							System.out.println("INSERITO"+j+", "+i+", "+qMatrix.get(j, i));
-						System.out.println("Condition BBS 1" + " statoV: "+j+", statoN: "+i);
+//						System.out.println("Condition BBS 1" + " statoV: "+j+", statoN: "+i);
                                                 cond3++;
 					}
 					else if(this.checkBbsCondition2(states.get(j), states.get(i), j, i)) {
 //						if(j==1)
 //							System.out.println("INSERITO2"+j+", "+i);
-						System.out.println("Condition BBS 2" + " statoV: "+j+", statoN: "+i);
+//						System.out.println("Condition BBS 2" + " statoV: "+j+", statoN: "+i);
                                                 cond4++;
 					}
 					else if(this.checkBbsCondition3(states.get(j), states.get(i), j, i)) {
 //						if(j==1)
 //							System.out.println("INSERITO3"+j+", "+i);
-						System.out.println("Condition BBS 3" + " statoV: "+j+", statoN: "+i);
+//						System.out.println("Condition BBS 3" + " statoV: "+j+", statoN: "+i);
                                                 cond5++;
 					}
 					else {
@@ -118,25 +119,23 @@ public class QMatrixGenerator {
 
 	private boolean checkRsRdCondition1(BbsState[] from, BbsState[] to, int x, int y) {
 
-		for(int j=0; j<from.length; j++) {
-			if(block[j]==1) {
-				if(from[j].getDest() != null) {
-					for(int k=0; k<from[j].getDest().size(); k++) {
-						int i = from[j].getDestAt(k);
-						if( ((block[i]==0) && (from[i].getNum()>=server[i])) || (block[i]==1) ) {
-							if( (to[j].getNum()==(from[j].getNum()-1)) && (to[i].getNum()==(from[i].getNum()+1)) ) {
+            for(int j=0; j<from.length; j++) {
+                if(block[j]==1) {
+                    if(from[j].getDest() != null) {
+                        for(int k=0; k<from[j].getDest().size(); k++) {
+                            int i = from[j].getDestAt(k);
+                            if( ((block[i]==0) && (from[i].getNum()>=server[i])) || (block[i]==1) ) {
+                                if( (to[j].getNum()==(from[j].getNum()-1)) && (to[i].getNum()==(from[i].getNum()+1)) ) {
 
-								qMatrix.set(x, y, this.getDelta(from[j].getNum())*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, i)*this.isAccepted(from[j].getNum(), i));
-
-
-								return true;
-							}
-						}
-					}
-				}
-			}
-		}
-		return false;
+                                        qMatrix.set(x, y, this.getDelta(from[j].getNum())*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, i)*this.isAccepted(from[j].getNum(), i));
+                                        return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
 	}
 
 	private boolean checkRsRdCondition2(BbsState[] from, BbsState[] to, int xx, int yy) {
@@ -167,31 +166,23 @@ public class QMatrixGenerator {
 
 		for(int j=0; j<from.length; j++) {
                     if(block[j]==0) { //Se BBS-SO
-//                        System.out.println("J = " + j + "\n è BBS!!");
                         if(from[j].getDest() != null) {
-//                            System.out.println("ha destinazioni!!");
-//                            System.out.println("Num DESTINAZIONI(" + j + "): " + from[j].getDest().size());
                             for(int k=0; k<from[j].getDest().size(); k++) {
                                 int i = from[j].getDestAt(k);
-//                                System.out.println("i=" + from[j].getDestAt(k));
-//                                System.out.println("i=" + i + " | j=" + j);
-                                //System.out.println("Dentro for "+i);
                                 if(from[j].getNum()<=server[j]) {
-//                                    System.out.println("n <= server");
-                                    //System.out.println("OK");
                                     if( ((block[i]==0) && (from[i].getNum()>=server[i])) || block[i]==1) {
-//                                        System.out.println("i è BBS n>=server || i non è bbs!! " + " i=" + i);
-//                                        System.out.println("to n=" + to[j].getNum() + " | from n=" + from[j].getNum());
-//                                        System.out.println("i=" + i + " | j=" + j);
+//                                        System.out.println("Entra |j="+j+" |i="+i+" |numTo="+to[j].getNum()+" |numFrom="+from[j].getNum());
+                                        /* Teorema di Notargiacomo */
                                         if(i==j && (to[j].getNum()==from[j].getNum()) ) {
                                                 int ns = from[j].getNS(k);
 //                                                System.out.println("BBS1 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
 //                                                System.out.println("FROM: "+this.printState(from));
 //                                                System.out.println("TO: "+this.printState(to));
+//                                                System.out.println("ns: " + ns);
                                                 if(ns>0) {
 //										if(ns==0)
 //										System.out.println("k: "+k+", "+from[j].toString());
-                                                        System.out.println("ns: "+ns+", serv: "+this.serviceRate[j]+", f: "+this.calcF(from[j].getNum())+", acc: "+this.isAccepted(from[i].getNum(), i));
+//                                                        System.out.println("ns: "+ns+", serv: "+this.serviceRate[j]+", f: "+this.calcF(from[j].getNum())+", acc: "+this.isAccepted(from[i].getNum(), i));
                                                         qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.isAccepted(from[i].getNum(), i));
                                                         return true;
                                                 }
@@ -217,21 +208,30 @@ public class QMatrixGenerator {
 }
 
 private boolean checkBbsCondition2(BbsState[] from, BbsState[] to, int xx, int yy) {
-
+//        System.out.println("checkBbsCondition2");
         for(int j=0; j<from.length; j++) {
             if(block[j]==0) {
                         if(from[j].getDest() != null) {
                                 for(int k=0; k<from[j].getDest().size(); k++) {
                                         int i = from[j].getDestAt(k);
                                         if(from[j].getNum()>server[j]) {
+//                                            System.out.println("Entra");
                                                 if( ((block[i]==0) && (from[i].getNum()>=server[i])) || block[i]==1) {
+//                                                    System.out.println("Entra2");
+//                                                    System.out.println("Entra |j="+j+" |i="+i+" |numTo="+to[j].getNum()+" |numFrom="+from[j].getNum());
                                                         if(i==j && (to[j].getNum()==from[j].getNum()) ) {
-                                                                for(int x=0; x<(to[i].getNsSize()); x++) {
+//                                                            System.out.println("Entra3 IF");
+                                                                for(int x=0; x<(to[j].getNsSize()); x++) {
                                                                         if( (to[j].getNS(x) == (from[j].getNS(x)+1)) ) {
                                                                                 int ns = from[j].getNSof(j, i);
-                                                                                System.out.println("BBS2 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
-                                                                                System.out.println("FROM: "+this.printState(from));
-                                                                                System.out.println("TO: "+this.printState(to));
+//                                                                                System.out.println("BBS2 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
+//                                                                                System.out.println("FROM: "+this.printState(from));
+//                                                                                System.out.println("TO: "+this.printState(to));
+//                                                                                System.out.println("stampa(non 0):"+ns);
+//                                                                                System.out.println(this.serviceRate[j]);
+//                                                                                System.out.println(this.calcF(from[j].getNum()));
+//                                                                                System.out.println(this.routingMatrix.get(j, from[j].getDestAt(x)));
+//                                                                                System.out.println(this.isAccepted(from[i].getNum(), i) );
                                                                                 if(ns>0) {
                                                                                         qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, from[j].getDestAt(x))*this.isAccepted(from[i].getNum(), i));
                                                                                         return true;
@@ -240,8 +240,10 @@ private boolean checkBbsCondition2(BbsState[] from, BbsState[] to, int xx, int y
                                                                 }
                                                         }
                                                         else if( (to[j].getNum()==from[j].getNum()-1) && (to[i].getNum()==from[i].getNum()+1) ) {
-                                                                for(int x=0; x<(to[i].getNsSize()); x++) {
+//                                                            System.out.println("Entra3 ELSE | size=" + to[j].getNsSize());
+                                                                for(int x=0; x<(to[j].getNsSize()); x++) {
                                                                         if( (to[j].getNS(x) == (from[j].getNS(x)+1)) ) {
+//                                                                            System.out.println("Entra4 ELSE");
                                                                                 int ns = from[j].getNSof(j, i);
                                                                                 if(ns>0) {
                                                                                         qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, from[j].getDestAt(x))*this.isAccepted(from[i].getNum(), i));
@@ -274,9 +276,9 @@ private boolean checkBbsCondition2(BbsState[] from, BbsState[] to, int xx, int y
 									for(int x=0; x<(to[i].getNsSize()); x++) {
 										if( (to[i].getNS(x) == (from[i].getNS(x)+1)) ) {
 											int ns = from[j].getNSof(j, i);
-											System.out.println("BBS3 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
-											System.out.println("FROM: "+this.printState(from));
-											System.out.println("TO: "+this.printState(to));
+//											System.out.println("BBS3 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
+//											System.out.println("FROM: "+this.printState(from));
+//											System.out.println("TO: "+this.printState(to));
 											if(ns>0) {
 												qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, from[j].getDestAt(x)));
 												return true;
@@ -314,26 +316,29 @@ private boolean checkBbsCondition2(BbsState[] from, BbsState[] to, int xx, int y
 
 	public void printQMatrix() {
 		for(int j=0; j<qMatrix.numRows(); j++) {
+                        System.out.print(j + ": \t");
 			for(int i=0; i<qMatrix.numColumns(); i++) {
 				//if(qMatrix.get(j, i)!=0)
 				System.out.print(qMatrix.get(j, i)+" ");
 			}
 			System.out.println();
-
 		}
-
+                System.out.println("\n\n");
 	}
 
 	public void printZeroQMatrix() {
+                Vector empty = new Vector();
 		boolean check = true;
 		int counter = 0;
 		for(int j=0; j<qMatrix.numRows(); j++) {
 			for(int i=0; i<qMatrix.numColumns(); i++) {
 				if(qMatrix.get(j, i)!=0){
 					check = false;
+                                        
 				}
 			}
 			if(check) {
+                                empty.add(j);
 				counter++;
 //				System.out.println("Riga vuota: "+j);
 			}
@@ -342,6 +347,9 @@ private boolean checkBbsCondition2(BbsState[] from, BbsState[] to, int xx, int y
 
 		}
 		System.out.println("Empty lines: "+counter);
+                for(int i=0; i<empty.size(); i++){
+                    System.out.println(empty.get(i));
+                }
 
 	}
 	

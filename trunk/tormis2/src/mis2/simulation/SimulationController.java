@@ -36,23 +36,23 @@ public class SimulationController {
 		DenseVector x = prob.calcPi();
 		
 		q.printZeroQMatrix();
-		q.printQMatrix();
+//		q.printQMatrix();
 		prob.printX(x);
 		
-		IndexCalculator index = new IndexCalculator(numJobs, states, 
-                                                x, routing.getRoutingMatrix());
-		System.out.println();
-		double total = 0;
-		for(int i=0; i<x.size(); i++) {
-			total += x.get(i);
-		}
-		for(int i=0; i<M; i++) {
-                        System.out.println();
-			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
-			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
-			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
-			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
-		}
+//		IndexCalculator index = new IndexCalculator(numJobs, states, 
+//                                                x, routing.getRoutingMatrix());
+//		System.out.println();
+//		double total = 0;
+//		for(int i=0; i<x.size(); i++) {
+//			total += x.get(i);
+//		}
+//		for(int i=0; i<M; i++) {
+//                        System.out.println();
+//			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
+//			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
+//			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
+//			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
+//		}
 //		System.out.println("\n\ttotal: "+tIndexCalculatootal);
 //                System.out.println();
 		
@@ -66,7 +66,7 @@ public class SimulationController {
 		routing.printRoutingMatrix();
 		ParametersContainer.loadParameters();
 		SimulationController sim = null;
-		for(int i=1; i<=ParametersContainer.getN(); i++) {
+		for(int i=ParametersContainer.getN(); i<=ParametersContainer.getN(); i++) {
 			System.out.println("Job: "+i);
 			sim = new SimulationController(i, routing);
 		}

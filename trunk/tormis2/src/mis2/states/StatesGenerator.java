@@ -334,6 +334,7 @@ public class StatesGenerator {
 
 	public void printStates(Vector<BbsState[]> states) {
 		for(int i=0; i<states.size(); i++) {
+                        System.out.print(i + ": \t");
 			for(int j=0; j<((BbsState[])states.get(i)).length; j++) {
 				//System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
 				System.out.print("<"+((BbsState[])states.get(i))[j].getNum()+", "+((BbsState[])states.get(i))[j].toString()+">   ");
