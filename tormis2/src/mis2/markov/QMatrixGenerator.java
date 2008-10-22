@@ -63,6 +63,7 @@ public class QMatrixGenerator {
 		double diag = 0;
 		for(int j=0; j<states.size(); j++) {               // j - righe
 			for(int i=0; i<states.size(); i++) {       // i - colon
+				System.out.println("X: "+j+", Y: "+i);
 				if(i!=j) {
 					if(i==0 && j>0) {
 
@@ -171,7 +172,9 @@ public class QMatrixGenerator {
 //								System.out.println("OK2");
 								if(i==j && (to[j].getNum()==from[j].getNum()) ) {
 									int ns = from[j].getNS(k);
-									System.out.println("i: "+xx);
+									System.out.println("BBS1 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
+									System.out.println("FROM: "+this.printState(from));
+									System.out.println("TO: "+this.printState(to));
 									if(ns>0) {
 //										if(ns==0)
 //										System.out.println("k: "+k+", "+from[j].toString());
@@ -213,6 +216,9 @@ public class QMatrixGenerator {
 									for(int x=0; x<(to[i].getNsSize()); x++) {
 										if( (to[j].getNS(x) == (from[j].getNS(x)+1)) ) {
 											int ns = from[j].getNSof(j, i);
+											System.out.println("BBS2 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
+											System.out.println("FROM: "+this.printState(from));
+											System.out.println("TO: "+this.printState(to));
 											if(ns>0) {
 												qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, from[j].getDestAt(x))*this.isAccepted(from[i].getNum(), i));
 												return true;
@@ -253,6 +259,9 @@ public class QMatrixGenerator {
 									for(int x=0; x<(to[i].getNsSize()); x++) {
 										if( (to[i].getNS(x) == (from[i].getNS(x)+1)) ) {
 											int ns = from[j].getNSof(j, i);
+											System.out.println("BBS3 -> x: "+xx+" y: "+yy+", j: "+j+" to k: "+k);
+											System.out.println("FROM: "+this.printState(from));
+											System.out.println("TO: "+this.printState(to));
 											if(ns>0) {
 												qMatrix.set(xx, yy, ns*this.serviceRate[j]*this.calcF(from[j].getNum())*this.routingMatrix.get(j, from[j].getDestAt(x)));
 												return true;
@@ -319,5 +328,13 @@ public class QMatrixGenerator {
 		}
 		System.out.println("Empty lines: "+counter);
 
+	}
+	
+	public String printState(BbsState[] state) {
+		String out = "";
+		for(int i=0; i<state.length; i++) {
+			out += "<"+state[i].getNum()+", "+state[i].toString()+"> ";
+		}
+		return out;
 	}
 }
