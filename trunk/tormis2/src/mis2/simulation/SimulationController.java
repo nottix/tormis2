@@ -29,15 +29,35 @@ public class SimulationController {
 //		System.out.println("Total: "+total2);
 		statesGen.printStates(states);
 		
-		QMatrixGenerator q = new QMatrixGenerator(states, routing.getRoutingMatrix());
-		Matrix qMatrix = q.calcQMatrix();
+		Matrix qMatrix = new DenseMatrix(states.size(), states.size());
+		int size = states.size();
 		
-		StateProbability prob = new StateProbability(qMatrix);
-		DenseVector x = prob.calcPi();
+		QMatrixGenerator q = null;
+		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
+		int numThread = 4;
+		for(int i=0; i<size; i+=(size/numThread)) {
+			System.out.println("Size: "+size+", StartRow: "+i+", StartCol: "+0+", EndRow: "+(i+size/numThread)+", EndCol: "+(size));
+			q = new QMatrixGenerator(states, routing.getRoutingMatrix(), qMatrix, i, 0, (i+size/numThread), size);
+			qVec.add(q);
+		}
 		
-		q.printZeroQMatrix();
+		try {
+			//Thread.sleep(10000);
+			for(int i=0; i<qVec.size(); i++) {
+				qVec.get(i).join();
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//Matrix qMatrix = q.calcQMatrix();
+		
+//		StateProbability prob = new StateProbability(qMatrix);
+//		DenseVector x = prob.calcPi();
+		
+		q.printZeroQMatrix(qMatrix);
 //		q.printQMatrix();
-		prob.printX(x);
+//		prob.printX(x);
 		
 //		IndexCalculator index = new IndexCalculator(numJobs, states, 
 //                                                x, routing.getRoutingMatrix());
