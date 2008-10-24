@@ -81,8 +81,7 @@ public class IndexCalculator {
 //                             (n==this.states.get(S)[X].getNum()) ) ||
 //                              ((!this.states.get(S)[X].isBlocked()) &&
 //                               (n==this.states.get(S)[X].getNum())) ) {
-                        if( this.states.get(S)[X].isBlocked() && 
-                                (n==this.states.get(S)[X].getNum()) ) {
+                        if( n==this.states.get(S)[X].getNum() ) {
                             return true;
 			}
 		}
@@ -271,7 +270,8 @@ public class IndexCalculator {
 		
 		for(int n=0; n<this.states.size(); n++) {
 			meanQueue += this.states.get(n)[i].getNum()*
-                                        this.calcPi(i, this.states.get(n)[i].getNum());
+                                          this.pi.get(n);
+//                                        this.calcPi(i, this.states.get(n)[i].getNum());
 		}
 		
 		return meanQueue;
