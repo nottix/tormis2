@@ -34,7 +34,7 @@ public class SimulationController {
 		
 		QMatrixGenerator q = null;
 		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
-		Double numThread = 2.0;
+		Double numThread = 3.0;
 		for(Double i=0.0; i<size; i+=(size/numThread)) {
 			int endRow = Double.valueOf(Math.ceil((i+(size/numThread)))).intValue();
 			int sizeVal = Double.valueOf(Math.ceil(size)).intValue();
@@ -54,30 +54,30 @@ public class SimulationController {
 		}
 		//Matrix qMatrix = q.calcQMatrix();
 		
-//		StateProbability prob = new StateProbability(qMatrix);
-//		DenseVector x = prob.calcPi();
+		StateProbability prob = new StateProbability(qMatrix);
+		DenseVector x = prob.calcPi();
 		
-		//q.printZeroQMatrix(qMatrix);
+		q.printZeroQMatrix(qMatrix);
 		
-//		q.printQMatrix();
-//		prob.printX(x);
+		q.printQMatrix();
+		prob.printX(x);
 		
-//		IndexCalculator index = new IndexCalculator(numJobs, states, 
-//                                                x, routing.getRoutingMatrix());
-//		System.out.println();
-//		double total = 0;
-//		for(int i=0; i<x.size(); i++) {
-//			total += x.get(i);
-//		}
-//		for(int i=0; i<M; i++) {
-//                        System.out.println();
-//			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
-//			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
-//			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
-//			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
-//		}
-//		System.out.println("\n\ttotal: "+tIndexCalculatootal);
-//                System.out.println();
+		IndexCalculator index = new IndexCalculator(numJobs, states, 
+                                                x, routing.getRoutingMatrix());
+		System.out.println();
+		double total = 0;
+		for(int i=0; i<x.size(); i++) {
+			total += x.get(i);
+		}
+		for(int i=0; i<M; i++) {
+                        System.out.println();
+			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
+			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
+			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
+			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
+		}
+		System.out.println("\n\ttotal: "+total);
+                System.out.println();
 		
 	}
 
