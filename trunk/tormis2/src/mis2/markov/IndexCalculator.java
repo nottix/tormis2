@@ -204,11 +204,14 @@ public class IndexCalculator {
 			
 			for(int stato=0; stato<this.states.size(); stato++){
 		        if(!(this.states.get(stato)[i].getNum()==0)) {
-		        	for(int d=0; d<this.states.get(stato)[i].getNsSize(); d++) {
-		        		int dest = this.states.get(stato)[i].getNS(d);
+		        	for(int d=0; d<this.states.get(stato)[i].getDest().size(); d++) {
+		        		int dest = this.states.get(stato)[i].getDest().get(d);
 		        		for(int j=0; j<this.block.length; j++) {
 		        			if(dest==j && this.states.get(stato)[j].getNum()<this.capacity[j]) {
-		        				utilization += this.pi.get(stato)*this.states.get(stato)[i].getNum()/this.server[i];
+		        				if(this.server[i]>1)
+		        					utilization += this.pi.get(stato)*this.states.get(stato)[i].getNum()/this.server[i];
+		        				else
+		        					utilization += this.pi.get(stato);
 		        			}
 		        		}
 		        	}
@@ -217,9 +220,7 @@ public class IndexCalculator {
 		        }
 		         //   Ue += (probabilita.get(stato)*Math.min(multiserver, (matrix_stato_2[stato][nodo*2] - matrix_stato_2[stato][(nodo*2)+1]))) / multiserver;
 		    }
-		}
-
-		// RS-RD
+		}	// RS-RD
 		else if(block[i]==1) 
 		{
 			
@@ -227,8 +228,7 @@ public class IndexCalculator {
 				if(this.states.get(stato)[i].getNum() != 0) {
 		            for(int j=0; j<this.block.length; j++){
 		                if(this.routingMatrix.get(i, j) != 0){
-		                    if(!(this.states.get(stato)[i].getNum() >= this.capacity[j] && 
-		                                        this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
+		                    if(!(this.states.get(stato)[i].getNum() >= this.capacity[j] && this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
 		                                utilization += pi.get(stato) * this.routingMatrix.get(i, j);
 		                    }
 		                }
@@ -263,12 +263,12 @@ public class IndexCalculator {
 		double throughput = 0.0;
 
 		if(this.capacity[i]==0) {
-			throughput = this.serviceRate[i]*this.calcUtilizationOf(i);
+			//throughput = this.serviceRate[i]*this.calcUtilizationOf(i);
 			
 
             for(int stato=0; stato<this.states.size(); stato++){
                 if(states.get(stato)[i].getNum() != 0){
-                    for(int j=0; j<this.block.length ;j++){
+                    for(int j=0; j<this.block.length; j++){
                         if(this.routingMatrix.get(i, j) != 0){
                             if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
                                   double mu = this.states.get(stato)[i].getNum() * this.serviceRate[i];
