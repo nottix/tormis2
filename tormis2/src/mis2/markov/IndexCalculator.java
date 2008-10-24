@@ -24,7 +24,7 @@ public class IndexCalculator {
 	private DenseVector totT;
 
 	/**
-	 * Tr0 = 
+	 * Tr0 = 2.56 - 1 job
 	 * 
 	 * @param numJobs
 	 * @param states
