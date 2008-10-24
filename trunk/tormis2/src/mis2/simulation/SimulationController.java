@@ -27,7 +27,7 @@ public class SimulationController {
 //			total2 += states.get(j)[1].getNum();
 //		}
 //		System.out.println("Total: "+total2);
-		statesGen.printStates(states);
+		//statesGen.printStates(states);
 		
 		Matrix qMatrix = new DenseMatrix(states.size(), states.size());
 		Double size = (double)states.size();
@@ -59,7 +59,7 @@ public class SimulationController {
 		
 		q.printZeroQMatrix(qMatrix);
 		
-		q.printQMatrix();
+		//q.printQMatrix();
 		prob.printX(x);
 		
 		IndexCalculator index = new IndexCalculator(numJobs, states, 
@@ -76,8 +76,12 @@ public class SimulationController {
 			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
 			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
 		}
+		System.out.println("\tTr: "+index.centerResponseTime(index.getTotT(), new Gauss(routing.getRoutingMatrix()).getRapVisite()));
+		
 		System.out.println("\n\ttotal: "+total);
                 System.out.println();
+                
+        MVA mva = new MVA(numJobs, routing.getRoutingMatrix());
 		
 	}
 
@@ -89,7 +93,7 @@ public class SimulationController {
 		routing.printRoutingMatrix();
 		ParametersContainer.loadParameters();
 		SimulationController sim = null;
-		for(int i=ParametersContainer.getN(); i<=ParametersContainer.getN(); i++) {
+		for(int i=1/*ParametersContainer.getN()*/; i<=ParametersContainer.getN(); i++) {
 			System.out.println("Job: "+i);
 			sim = new SimulationController(i, routing);
 		}
