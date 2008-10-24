@@ -17,6 +17,11 @@ public class IndexCalculator {
 	private double[] serviceRate;
 	private int[] block;
 	private int[] capacity;
+        
+        private DenseVector totU;
+        private DenseVector totX;
+        private DenseVector totL;
+        private DenseVector totT;
 	
 	public IndexCalculator(int numJobs, Vector<BbsState[]> states, DenseVector pi, Matrix routingMatrix) {
 		this.routingMatrix = routingMatrix;
@@ -27,6 +32,12 @@ public class IndexCalculator {
 		this.numJobs = numJobs;
 		this.states = states;
 		this.pi = pi;
+                
+                this.totU = new DenseVector(this.block.length);
+                this.totX = new DenseVector(this.block.length);
+                this.totL = new DenseVector(this.block.length);
+                this.totT = new DenseVector(this.block.length);
+        
 	}
 	
         private double calcF(int n) {
@@ -284,6 +295,65 @@ public class IndexCalculator {
         public double calcMeanResponseTimeOf2(int i, double util) {
 		return (this.calcMeanQueueOf(i) / util);
 	} 
+        
+        public DenseVector responseTime(DenseVector queueLengths, DenseVector effectiveThroughputs){
+                DenseVector res=new DenseVector(this.block.length);
+                for(int i=0;i<this.block.length;i++){
+                        res.set(i, queueLengths.get(i)/effectiveThroughputs.get(i));
+                }    
+                return res;
+        }   
+    
+        public DenseVector centerResponseTime(DenseVector responseTimes, Matrix lookRapport){
+                DenseVector res=new DenseVector(this.block.length);
+                for(int i=0; i<this.block.length; i++){
+                        for(int j=0; j<this.block.length; j++){
+                                if(i!=j)
+                                        res.set(i, res.get(i)+responseTimes.get(j)*
+                                                lookRapport.get(j+1, i+1) );
+//                                                (Network.y[j+1]/Network.y[i+1]);
+                        }   
+                }    
+                return res;
+        } 
+        
+        
+        /* Calcolo indici globali */
+        public DenseVector getTotU() {
+        
+                for(int i=0; i<this.block.length; i++) {
+			this.totU.set(i, this.calcUtilizationOf(i));
+		}
+                
+                return this.totU;
+        }
+        
+        public DenseVector getTotX() {
+        
+                for(int i=0; i<this.block.length; i++) {
+			this.totU.set(i, this.calcThroughputOf(i));
+		}
+                
+                return this.totX;
+        }
+        
+        public DenseVector getTotL() {
+        
+                for(int i=0; i<this.block.length; i++) {
+			this.totL.set(i, this.calcMeanQueueOf(i));
+		}
+                
+                return this.totL;
+        }
+        
+        public DenseVector getTotT() {
+        
+                for(int i=0; i<this.block.length; i++) {
+			this.totT.set(i, this.calcMeanResponseTimeOf(i));
+		}
+                
+                return this.totT;
+        }
 	
 	//-----------------------------//
 	
