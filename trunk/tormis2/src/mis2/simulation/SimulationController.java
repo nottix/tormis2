@@ -30,14 +30,16 @@ public class SimulationController {
 		statesGen.printStates(states);
 		
 		Matrix qMatrix = new DenseMatrix(states.size(), states.size());
-		int size = states.size();
+		Double size = (double)states.size();
 		
 		QMatrixGenerator q = null;
 		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
-		int numThread = 4;
-		for(int i=0; i<size; i+=(size/numThread)) {
-			System.out.println("Size: "+size+", StartRow: "+i+", StartCol: "+0+", EndRow: "+(i+size/numThread)+", EndCol: "+(size));
-			q = new QMatrixGenerator(states, routing.getRoutingMatrix(), qMatrix, i, 0, (i+size/numThread), size);
+		Double numThread = 2.0;
+		for(Double i=0.0; i<size; i+=(size/numThread)) {
+			int endRow = Double.valueOf(Math.ceil((i+(size/numThread)))).intValue();
+			int sizeVal = Double.valueOf(Math.ceil(size)).intValue();
+			System.out.println("Size: "+sizeVal+", StartRow: "+i.intValue()+", StartCol: "+0+", EndRow: "+endRow+", EndCol: "+(sizeVal));
+			q = new QMatrixGenerator(states, routing.getRoutingMatrix(), qMatrix, i.intValue(), 0, endRow, sizeVal);
 			qVec.add(q);
 		}
 		
@@ -55,7 +57,8 @@ public class SimulationController {
 //		StateProbability prob = new StateProbability(qMatrix);
 //		DenseVector x = prob.calcPi();
 		
-		q.printZeroQMatrix(qMatrix);
+		//q.printZeroQMatrix(qMatrix);
+		
 //		q.printQMatrix();
 //		prob.printX(x);
 		
