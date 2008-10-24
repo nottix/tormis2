@@ -38,15 +38,18 @@ public class IndexCalculator {
 	}
 	
         public double calcPi(int X, int n) {
-		double total = 0.0;
-		if(capacity[X]==0) {
+		
+                double total = 0.0;
+		if(capacity[X]==0) 
+                {
 			for(int S=0; S<states.size(); S++) {
 				if(states.get(S)[X].getNum() == n) {
 					total += pi.get(S);
 				}
 			}
 		}
-		else {
+		else 
+                {
 			for(int S=0; S<states.size(); S++) {
 				if(this.calcPiCond(X, S, n)) {
 					total += pi.get(S);
@@ -78,7 +81,8 @@ public class IndexCalculator {
 //                             (n==this.states.get(S)[X].getNum()) ) ||
 //                              ((!this.states.get(S)[X].isBlocked()) &&
 //                               (n==this.states.get(S)[X].getNum())) ) {
-                        if( (n==this.states.get(S)[X].getNum()) ) {
+                        if( this.states.get(S)[X].isBlocked() && 
+                                (n==this.states.get(S)[X].getNum()) ) {
                             return true;
 			}
 		}
