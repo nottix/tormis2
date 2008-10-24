@@ -306,7 +306,7 @@ public class StatesGenerator {
 
 		for(int i=0; i<statesB[0].size(); i++) {
 			BbsState[] bbsc = this.cloneState(bbs);
-			int[] tmp = this.getState(i, states);
+			int[] tmp = this.getState(i, statesB);
 
 			for(int j=0; j<this.M; j++){
 				bbsc[j].setNum(tmp[j]);
