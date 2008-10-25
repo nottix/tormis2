@@ -103,13 +103,17 @@ public class Gauss {
 		j = dim;
 		y = calcola_pigreco(backup, Pi); 
 
+		System.out.println("RAPP:");
 		for(i=0; i<dim; i++){
 			for(j=0; j<dim; j++){
-				rapVisite.set(j, i, y[j] / y[i]);
+				rapVisite.set(i, j, y[i] / y[j]);
+				System.out.print(rapVisite.get(i, j)+" ");
 			}
+			System.out.println();
 		}
-		System.out.print("Matrice rapporti visite");
-		stampaAVideo(rapVisite);
+		//System.out.print("Matrice rapporti visite");
+		
+		//stampaAVideo(rapVisite);
 
 	}
 

@@ -38,7 +38,7 @@ public class SimulationController {
 		for(Double i=0.0; i<size; i+=(size/numThread)) {
 			int endRow = Double.valueOf(Math.ceil((i+(size/numThread)))).intValue();
 			int sizeVal = Double.valueOf(Math.ceil(size)).intValue();
-			System.out.println("Size: "+sizeVal+", StartRow: "+i.intValue()+", StartCol: "+0+", EndRow: "+endRow+", EndCol: "+(sizeVal));
+			//System.out.println("Size: "+sizeVal+", StartRow: "+i.intValue()+", StartCol: "+0+", EndRow: "+endRow+", EndCol: "+(sizeVal));
 			q = new QMatrixGenerator(states, routing.getRoutingMatrix(), qMatrix, i.intValue(), 0, endRow, sizeVal);
 			qVec.add(q);
 		}

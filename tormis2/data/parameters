@@ -2,7 +2,7 @@
 M = 8
 
 #Numero utenti
-N = 2
+N = 3
 
 #Tempi di servizio
 Ts1 = 12
@@ -16,13 +16,13 @@ Ts8 = 0.3
 
 #Capacità
 B1 = 0
-B2 = 5
-B3 = 5
-B4 = 5
-B5 = 5
-B6 = 5
-B7 = 5
-B8 = 5
+B2 = 2
+B3 = 2
+B4 = 2
+B5 = 2
+B6 = 2
+B7 = 2
+B8 = 2
 
 #Tipo servente
 S1 = 1

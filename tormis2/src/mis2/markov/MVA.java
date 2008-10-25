@@ -87,7 +87,7 @@ public class MVA {
 			for(j=0; j<M; j++){
 				sommaTot = 0;
 				for(z=0; z<M; z++) {
-					sommaTot=sommaTot+(meanTime.get(i,z)*rapVisite.get(z,j));
+					sommaTot=sommaTot+(meanTime.get(i,z)*rapVisite.get(j,z));
 				}
 				throughput.set(i, j, (i+1)/sommaTot);
 				meanQueue.set(i,j,(throughput.get(i,j)*meanTime.get(i,j)));
@@ -105,7 +105,7 @@ public class MVA {
 				globalMeanTime.set(p, 0.0);
 				for(int g=0; g<this.M; g++){
 					if(g!=p) {
-						globalMeanTime.set(p,globalMeanTime.get(p)+rapVisite.get(g,p)*meanQueue.get(njob-1,g));
+						globalMeanTime.set(p,globalMeanTime.get(p)+rapVisite.get(p,g)*meanQueue.get(njob-1,g));
 					}
 				}
 				System.out.println("Etr = "+globalMeanTime.get(p));
