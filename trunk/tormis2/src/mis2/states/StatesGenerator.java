@@ -94,106 +94,6 @@ public class StatesGenerator {
 		return ret_matrix;
 	}
 
-
-//	private int getMinPopulation(int index) {
-//	int totalCap = 0;
-//	for(int i=0; i<capacity.length; i++) {
-//	if(i!=index) {
-//	totalCap += capacity[i]; 
-//	}
-//	}
-//	totalCap = numJobs - totalCap;
-//	if(totalCap<0)
-//	return 0;
-//	else
-//	return totalCap;
-//	}
-
-
-//	public Vector<BbsState[]> calcBlockStates(Vector[] dispStates) {
-
-//	BbsState[] state;
-//	boolean valid = true;
-
-//	System.out.println("dispStates size: "+dispStates[0].size());
-//	for(int i=0; i<dispStates[0].size(); i++) {
-//	state = new BbsState[M];
-//	for(int j=0; j<dispStates.length; j++) {
-//	if(block[j]==0)
-//	state[j] = new BbsState((Integer)dispStates[j].get(i), routing.getDest(j), j);
-//	else
-//	state[j] = new BbsState((Integer)dispStates[j].get(i), routing.getDest(j), j);
-//	//System.out.print("i: "+i+", state["+j+"]: "+state[j].getNum()+", ");
-//	}
-//	System.out.println();
-
-//	for(int k=0; k<block.length && valid; k++) {
-//	//if(block[k]==1) { //RS-RD
-//	if(capacity[k]>0) {
-//	//System.out.println("State val: "+state[k]+", pop: "+this.getMinPopulation(k)+", cap: "+capacity[k]);
-//	if((state[k].getNum() < this.getMinPopulation(k)) || (state[k].getNum() > capacity[k])) {
-//	valid=false;
-//	}
-//	}
-//	}
-//	if(valid) {
-//	this.states.addAll(this.genBbsStates(state));
-//	}
-//	else {
-//	System.out.println("State "+i);
-//	for(int y=0; y<state.length; y++) {
-//	System.out.print("Num: "+state[y].getNum()+", Ns: "+state[y].printNS()+" - ");
-//	}
-//	System.out.println("INVALID");
-//	}
-//	valid=true;
-//	}
-
-//	return this.states;
-//	}
-
-//	private Vector<BbsState[]> genBbsStates(BbsState[] state) {
-//	Vector<BbsState[]> ret = new Vector<BbsState[]>();
-//	Vector[] states;
-//	BbsState[] clone;
-//	int numGen, min;
-//	boolean added = false;
-
-//	for(int i=0; i<state.length; i++) {
-//	if(block[i]==0 && state[i].getNum()>0) {
-//	min = Math.min(state[i].getNum(), server[i]);
-//	numGen = this.calcNumStates(min, state[i].getDest().size()).intValue();
-//	//System.out.println("Num: "+min+", NS: "+state[i].getDest().size()+", Comb: "+numGen);
-//	//this.statesDisp = null;
-//	states = this.calcStatesDisp(numGen, state[i].getDest().size(), min);
-//	//System.out.println("States len: "+states.length);
-//	for(int k=0; k<states[0].size(); k++) {
-//	clone = state.clone();
-//	clone[i] = new BbsState(state[i].getNum(), state[i].getDest(), i);
-//	for(int j=0; j<states.length; j++) {
-//	clone[i].addNS((Integer)states[j].get(k));
-//	}
-//	ret.add(clone);
-//	added = true;
-//	}
-//	//this.printStatesDisp();
-//	//this.printStates();
-//	}
-//	}
-//	if(!added)
-//	ret.add(state);
-
-//	for(int i=0; i<ret.size(); i++) {
-//	for(int j=0; j<((BbsState[])ret.get(i)).length; j++) {
-//	//System.out.println("j: "+j+", Num: "+((BbsState[])this.states.get(i))[j].getNum()+", NS: "+((BbsState[])this.states.get(i))[j].getNs());
-//	System.out.print("<"+((BbsState[])ret.get(i))[j].getNum()+", "+((BbsState[])ret.get(i))[j].printNS()+">   ");
-//	}
-//	System.out.println();
-//	}
-
-//	return ret;
-//	}
-
 	private int[] getState(int index, Vector[] states) {
 
 		int[] ret = new int[states.length];
@@ -241,7 +141,7 @@ public class StatesGenerator {
 
 		BbsState[] bbs = new BbsState[this.M];
 		for(int i=0; i<this.M; i++){
-			bbs[i] = new BbsState(-1, routing.getDest(i), i);
+			bbs[i] = new BbsState(-1, routing.getDest(i), i, this.numJobs);
 		}
 		return bbs;
 	}
@@ -265,23 +165,26 @@ public class StatesGenerator {
 
 	private void addNewStates(Vector<BbsState[]> states, int iNode) {
 
-		for(int i=0; i<states.size(); i++)
-		{
-			if(states.elementAt(i)[iNode].getNum() > 0){
-				BbsState[] bbs = this.cloneState(states.elementAt(i));
-				states.removeElementAt(i);
-                                
-				int[][] tmp = this.genBbsCombinations(this.server[iNode], bbs[iNode]);
-                                
-				for(int j=0; j<tmp.length; j++){
-					BbsState[] bbsc = this.cloneState(bbs);
-					for(int k=0; k<tmp[j].length; k++){
-						bbsc[iNode].setNS(tmp[j][k], k+1);
+		for(int i=0; i<states.size(); i++) {
+			if(states.elementAt(i)[iNode].getNum() > 0) {
+				//if(this.numJobs > this.capacity[iNode]) {
+					BbsState[] bbs = this.cloneState(states.elementAt(i));
+					states.removeElementAt(i);
+
+					int[][] tmp = this.genBbsCombinations(this.server[iNode], bbs[iNode]);
+
+					for(int j=0; j<tmp.length; j++) {
+						BbsState[] bbsc = this.cloneState(bbs);
+						for(int k=0; k<tmp[j].length; k++) {
+							bbsc[iNode].setNS(tmp[j][k], k+1);
+						}
+						if(!(bbsc[iNode].getNum()==this.capacity[iNode] && bbsc[iNode].getNSof(iNode, iNode)>0)) {
+							states.add(i, bbsc);
+							i++;
+						}
 					}
-					states.add(i, bbsc);
-					i++;
-				}
-				i--;
+					i--;
+				//}
 			}
 		}
 	}
@@ -290,9 +193,7 @@ public class StatesGenerator {
 
 		BbsState[] ret = new BbsState[orig.length];
 		for(int i=0; i<ret.length; i++){
-			ret[i] = new BbsState(orig[i].getNum(), 
-                                (Vector<Integer>)orig[i].getDest().clone(), 
-                                    orig[i].getINode());
+			ret[i] = new BbsState(orig[i].getNum(), (Vector<Integer>)orig[i].getDest().clone(), orig[i].getINode(), this.numJobs);
 			ret[i].setState(orig[i].getState());
 		}
 		return ret;

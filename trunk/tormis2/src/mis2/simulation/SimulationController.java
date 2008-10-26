@@ -27,7 +27,7 @@ public class SimulationController {
 //			total2 += states.get(j)[1].getNum();
 //		}
 //		System.out.println("Total: "+total2);
-		//statesGen.printStates(states);
+		statesGen.printStates(states);
 		
 		Matrix qMatrix = new DenseMatrix(states.size(), states.size());
 		Double size = (double)states.size();
@@ -44,15 +44,12 @@ public class SimulationController {
 		}
 		
 		try {
-			//Thread.sleep(10000);
 			for(int i=0; i<qVec.size(); i++) {
 				qVec.get(i).join();
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Matrix qMatrix = q.calcQMatrix();
 		
 		StateProbability prob = new StateProbability(qMatrix);
 		DenseVector x = prob.calcPi();
