@@ -39,15 +39,15 @@ public class MatrixByte {
                     
                     int len = k+5;
                     matrix[(i*this.numCols) + j] = new byte[len];
-                    matrix[(i*this.numCols) + j][0] = sign;
-                    if(sign == 1){
-                        for(int n=1; n<len; n++){
-                            if(n<strCrt.length){
-                                this.matrix[(i*this.numCols) + j][n] = (byte)strCrt[n];
-                            }
-                            else{
-                                this.matrix[(i*this.numCols) + j][n] = 0;
-                            }
+                    for(int n=0; n<len; n++){
+                        if(n==0){
+                            matrix[(i*this.numCols) + j][n] = sign;
+                        }
+                        else if(n<strCrt.length){
+                            this.matrix[(i*this.numCols) + j][n] = (byte)strCrt[n-1+sign];
+                        }
+                        else{
+                            this.matrix[(i*this.numCols) + j][n] = 0;
                         }
                     }
                     break;
@@ -75,7 +75,6 @@ public class MatrixByte {
                     retStr += (char)this.matrix[(i*this.numCols) + j][k];
                 }
             }
-            
             ret = Double.valueOf(retStr);
             retStr = null;
             
