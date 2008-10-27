@@ -5,11 +5,13 @@
 
 package mis2.markov;
 
+import no.uib.cipr.matrix.AbstractMatrix;
+
 /**
  *
  * @author gabriele
  */
-public class MatrixByte {
+public class MatrixByte extends AbstractMatrix {
 
         private int numRows;
         private int numCols;
@@ -18,14 +20,14 @@ public class MatrixByte {
         private final boolean test = true;
         
         public MatrixByte(int numRows, int numCols) {
-            
+            super(numRows, numCols);
             this.numRows = numRows;
             this.numCols = numCols;
             this.matrix = new byte[numRows * numCols][];
         }
         
-        public void set(int i, int j, Double num) {
-            
+        public void set(int i, int j, double numD) {
+            Double num = Double.valueOf(numD);
             String numStr = num.toString();
             char[] strCrt = numStr.toCharArray();
             byte sign = 0;

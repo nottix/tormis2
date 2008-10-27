@@ -27,19 +27,22 @@ public class SimulationController {
 //			total2 += states.get(j)[1].getNum();
 //		}
 //		System.out.println("Total: "+total2);
-		statesGen.printStates(states);
+		//statesGen.printStates(states);
 		
-		Matrix qMatrix = new DenseMatrix(states.size(), states.size());
+		Matrix qMatrix = new FlexCompRowMatrix(states.size(), states.size());
 		Double size = (double)states.size();
 		
+		System.out.println("size: "+size);
+		//System.exit(0);
 		QMatrixGenerator q = null;
 		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
-		Double numThread = 3.0;
+		Double numThread = 2.0;
+		QMatrixGenerator.counter = 0;
 		for(Double i=0.0; i<size; i+=(size/numThread)) {
 			int endRow = Double.valueOf(Math.ceil((i+(size/numThread)))).intValue();
 			int sizeVal = Double.valueOf(Math.ceil(size)).intValue();
 			//System.out.println("Size: "+sizeVal+", StartRow: "+i.intValue()+", StartCol: "+0+", EndRow: "+endRow+", EndCol: "+(sizeVal));
-			q = new QMatrixGenerator(states, routing.getRoutingMatrix(), qMatrix, i.intValue(), 0, endRow, sizeVal);
+			q = new QMatrixGenerator(states, routing.getRoutingMatrix(), qMatrix, i.intValue(), 0, endRow, sizeVal, numThread.intValue());
 			qVec.add(q);
 		}
 		
@@ -51,6 +54,7 @@ public class SimulationController {
 			e.printStackTrace();
 		}
 		
+		System.out.println("SIZE: "+String.valueOf((Object)qMatrix).length());
 		StateProbability prob = new StateProbability(qMatrix);
 		DenseVector x = prob.calcPi();
 		
@@ -78,7 +82,7 @@ public class SimulationController {
 		System.out.println("\n\ttotal: "+total);
                 System.out.println();
                 
-        MVA mva = new MVA(numJobs, routing.getRoutingMatrix());
+//        MVA mva = new MVA(numJobs, routing.getRoutingMatrix());
 		
 	}
 
@@ -90,7 +94,7 @@ public class SimulationController {
 		routing.printRoutingMatrix();
 		ParametersContainer.loadParameters();
 		SimulationController sim = null;
-		for(int i=1/*ParametersContainer.getN()*/; i<=ParametersContainer.getN(); i++) {
+		for(int i=ParametersContainer.getN(); i<=ParametersContainer.getN(); i++) {
 			System.out.println("Job: "+i);
 			sim = new SimulationController(i, routing);
 		}

@@ -167,7 +167,7 @@ public class StatesGenerator {
 
 		for(int i=0; i<states.size(); i++) {
 			if(states.elementAt(i)[iNode].getNum() > 0) {
-				//if(this.numJobs > this.capacity[iNode]) {
+				if(this.numJobs > this.capacity[iNode]) {
 					BbsState[] bbs = this.cloneState(states.elementAt(i));
 					states.removeElementAt(i);
 
@@ -178,13 +178,13 @@ public class StatesGenerator {
 						for(int k=0; k<tmp[j].length; k++) {
 							bbsc[iNode].setNS(tmp[j][k], k+1);
 						}
-						if(!(bbsc[iNode].getNum()==this.capacity[iNode] && bbsc[iNode].getNSof(iNode, iNode)>0)) {
+//						if(!(bbsc[iNode].getNum()==this.capacity[iNode] && bbsc[iNode].getNSof(iNode, iNode)>0)) {
 							states.add(i, bbsc);
 							i++;
-						}
+//						}
 					}
 					i--;
-				//}
+				}
 			}
 		}
 	}
