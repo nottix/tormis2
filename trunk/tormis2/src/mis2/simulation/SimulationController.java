@@ -33,10 +33,10 @@ public class SimulationController {
 		Double size = (double)states.size();
 		
 		System.out.println("size: "+size);
-		//System.exit(0);
+		System.exit(0);
 		QMatrixGenerator q = null;
 		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
-		Double numThread = 2.0;
+		Double numThread = 4.0;
 		QMatrixGenerator.counter = 0;
 		for(Double i=0.0; i<size; i+=(size/numThread)) {
 			int endRow = Double.valueOf(Math.ceil((i+(size/numThread)))).intValue();
@@ -46,6 +46,8 @@ public class SimulationController {
 			qVec.add(q);
 		}
 		
+		MemoryReclaimer mem = new MemoryReclaimer(qVec);
+		
 		try {
 			for(int i=0; i<qVec.size(); i++) {
 				qVec.get(i).join();
@@ -53,8 +55,10 @@ public class SimulationController {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		mem.stop();
+		mem = null;
 		
-		System.out.println("SIZE: "+String.valueOf((Object)qMatrix).length());
+		//System.out.println("SIZE: "+String.valueOf((Object)qMatrix).length());
 		StateProbability prob = new StateProbability(qMatrix);
 		DenseVector x = prob.calcPi();
 		
@@ -66,21 +70,21 @@ public class SimulationController {
 		IndexCalculator index = new IndexCalculator(numJobs, states, 
                                                 x, routing.getRoutingMatrix());
 		System.out.println();
-		double total = 0;
-		for(int i=0; i<x.size(); i++) {
-			total += x.get(i);
-		}
-		for(int i=0; i<M; i++) {
-                        System.out.println();
-			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
-			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
-			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
-			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
-		}
+//		double total = 0;
+//		for(int i=0; i<x.size(); i++) {
+//			total += x.get(i);
+//		}
+//		for(int i=0; i<M; i++) {
+//                        System.out.println();
+//			System.out.println("\tU"+i+": "+index.calcUtilizationOf(i));
+//			System.out.println("\tX"+i+": "+index.calcThroughputOf(i));
+//			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
+//			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
+//		}
 		System.out.println("\tTr: "+index.centerResponseTime(index.getTotT(), new Gauss(routing.getRoutingMatrix()).getRapVisite()));
 		
-		System.out.println("\n\ttotal: "+total);
-                System.out.println();
+//		System.out.println("\n\ttotal: "+total);
+//                System.out.println();
                 
 //        MVA mva = new MVA(numJobs, routing.getRoutingMatrix());
 		
