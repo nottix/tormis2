@@ -33,7 +33,7 @@ public class SimulationController {
 		Double size = (double)states.size();
 		
 		System.out.println("size: "+size);
-		System.exit(0);
+		//System.exit(0);
 		QMatrixGenerator q = null;
 		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
 		Double numThread = 4.0;
