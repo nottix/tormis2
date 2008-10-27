@@ -25,11 +25,6 @@ public class MatrixByte {
         }
         
         public void set(int i, int j, Double num) {
-        
-            if(num >= 10.0){
-                System.out.println("Errore double > 9.9 !!!!\n");
-                return;
-            }
             
             String numStr = num.toString();
             char[] strCrt = numStr.toCharArray();
@@ -41,35 +36,19 @@ public class MatrixByte {
                     sign = (strCrt[0]=='-')? (byte)1 : (byte)0;
                 }
                 if(strCrt[k] == '.'){
-                    int len = ( (strCrt.length - k)>5 )? 5 : (strCrt.length - k);
-
-                    if(k>=3 && k<=4) {
-                        matrix[(i*this.numCols) + j] = new byte[len + 2];
-                        matrix[(i*this.numCols) + j][0] = sign;
-                        tmp = numStr.substring( ((sign==1)? 1 : 0), k-1);
-                        matrix[(i*this.numCols) + j][1] = Byte.valueOf(tmp);
-                        tmp = numStr.substring( k-1, k);
-                        matrix[(i*this.numCols) + j][2] = Byte.valueOf(tmp);
-
-                        for(int iNum=2; iNum<len; iNum++){
-                            tmp = numStr.substring(k+iNum, k+iNum+1);
-                            matrix[(i*this.numCols) + j][iNum + 2] = Byte.valueOf(tmp);
+                    
+                    int len = k+5;
+                    matrix[(i*this.numCols) + j] = new byte[len];
+                    matrix[(i*this.numCols) + j][0] = sign;
+                    if(sign == 1){
+                        for(int n=1; n<len; n++){
+                            if(n<strCrt.length){
+                                this.matrix[(i*this.numCols) + j][n] = (byte)strCrt[n];
+                            }
+                            else{
+                                this.matrix[(i*this.numCols) + j][n] = 0;
+                            }
                         }
-                    }
-                    else if(k<3) {
-                        tmp = numStr.substring( ((sign==1)? 1 : 0), k);
-                        matrix[(i*this.numCols) + j] = new byte[len + 1];
-                        matrix[(i*this.numCols) + j][0] = sign;
-                        matrix[(i*this.numCols) + j][1] = Byte.valueOf(tmp);
-
-                        for(int iNum=1; iNum<len; iNum++){
-                            tmp = numStr.substring(k+iNum, k+iNum+1);
-                            matrix[(i*this.numCols) + j][iNum + 1] = Byte.valueOf(tmp);
-                        }
-                    }
-                    else {
-                        System.out.println("Errore - bastaaa!!!\n");
-                        System.out.println(num);
                     }
                     break;
                 }
@@ -92,11 +71,8 @@ public class MatrixByte {
                 if(k==0){
                     retStr += (this.matrix[(i*this.numCols) + j][k]==1)? "-" : "";
                 }
-                else if(k==2){
-                    retStr += "." + this.matrix[(i*this.numCols) + j][k];
-                }
                 else{
-                    retStr += this.matrix[(i*this.numCols) + j][k];
+                    retStr += (char)this.matrix[(i*this.numCols) + j][k];
                 }
             }
             
