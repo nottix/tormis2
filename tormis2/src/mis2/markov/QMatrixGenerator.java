@@ -5,7 +5,7 @@ import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
 import mis2.states.BbsState;
 import mis2.util.*;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.Semaphore;;
 
 public class QMatrixGenerator extends Thread {
 
@@ -28,12 +28,13 @@ public class QMatrixGenerator extends Thread {
 	private int condDiag = 0;
 	private int condZero = 0;
 	public static int counter = 0;
-	public static Semaphore sem = null;
-	public static boolean ready = false;
+	public Semaphore sem = null;
+//	public static boolean ready = false;
 
 	public QMatrixGenerator(Vector<BbsState[]> states, Matrix routingMatrix, Matrix qMatrix, int startRow, int startCol, int endRow, int endCol, int numThreads) {
-		if(QMatrixGenerator.sem==null)
-			sem = new Semaphore(numThreads, false);
+//		if(QMatrixGenerator.sem==null)
+//			sem = new Semaphore(numThreads, false);
+		sem = new Semaphore(1, false);
 		this.states = states;
 		this.block = ParametersContainer.getBlock();
 		this.capacity = ParametersContainer.getCapacity();
@@ -51,6 +52,24 @@ public class QMatrixGenerator extends Thread {
 		this.setDaemon(true);
 		this.setPriority(Thread.MAX_PRIORITY);
 		this.start();
+	}
+	
+	public void lock() {
+		try {
+			this.sem.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void unlock() {
+		try {
+			this.sem.release();
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private int getDelta(int n) {
@@ -94,6 +113,7 @@ public class QMatrixGenerator extends Thread {
 			for(i=this.startCol; i<states.size() && i<this.endCol; i++) {       // i - colon
 
 				if(i!=j/* && i==1 && j==0*/) {
+					this.lock();
 //					System.out.println("from: "+this.printState(states.get(j)));
 //					System.out.println("to: "+this.printState(states.get(i)));
 					if(this.checkRsRdCondition1Unb(states.get(j), states.get(i), j, i)) {
@@ -142,36 +162,40 @@ public class QMatrixGenerator extends Thread {
 
 					}
 
-
+					this.unlock();
 					//this.yield();
 				}
 			}
-			ready=false;
-			sem.release();
-			if((j%50)==0) {
-				freeMem();
-			}
+//			ready=false;
+//			sem.release();
+//			if((j%50)==0) {
+//				freeMem();
+//			}
 		}
 		System.out.println("Total: "+states.size()*states.size()+", Cond1: "+cond1+", Cond2: "+cond2+", Cond3: "+cond3+", Cond4: "+cond4+", Cond5: "+cond5+", CondZero: "+condZero+", CondDiag: "+condDiag);
 //		return this.qMatrix;
 	}
 	
-	private void freeMem() {
-		try {
-			sem.acquire();
-			if(this.getName().charAt(0)=='0') {
-				((FlexCompRowMatrix)qMatrix).compact();
-				System.out.println("Acquired");
-//				Runtime.getRuntime().gc();
-			}
-//			else
-				
-//			sem.release();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public Matrix getQMatrix() {
+		return this.qMatrix;
 	}
+	
+//	private void freeMem() {
+//		try {
+//			sem.acquire();
+//			if(this.getName().charAt(0)=='0') {
+//				((FlexCompRowMatrix)qMatrix).compact();
+//				System.out.println("Acquired");
+////				Runtime.getRuntime().gc();
+//			}
+////			else
+//				
+////			sem.release();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	private boolean checkRsRdCondition1Unb(BbsState[] from, BbsState[] to, int x, int y) {
 
