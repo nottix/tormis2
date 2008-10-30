@@ -103,17 +103,17 @@ public class Gauss {
 		j = dim;
 		y = calcola_pigreco(backup, Pi); 
 
-		System.out.println("RAPP:");
+//		System.out.println("RAPP:");
 		for(i=0; i<dim; i++){
 			for(j=0; j<dim; j++){
 				rapVisite.set(i, j, y[i] / y[j]);
-				System.out.print(rapVisite.get(i, j)+" ");
+//				System.out.print(rapVisite.get(i, j)+" ");
 			}
-			System.out.println();
+//			System.out.println();
 		}
 		//System.out.print("Matrice rapporti visite");
 		
-		//stampaAVideo(rapVisite);
+//		stampaAVideo(rapVisite);
 
 	}
 
@@ -146,12 +146,12 @@ public class Gauss {
 			S1=S.copy(); // Reset matrice S' !!!
 			colonna_i_esima++;      // Incremento colonna
 		}
-		System.out.println("Soluzione: ");
-		for(i=0;i<pigreco.length;i++){
-			System.out.print(pigreco[i]+" ");
-
-		}
-		System.out.println();
+//		System.out.println("Soluzione: ");
+//		for(i=0;i<pigreco.length;i++){
+//			System.out.print(pigreco[i]+" ");
+//
+//		}
+//		System.out.println();
 		return pigreco;	
 	}
 
