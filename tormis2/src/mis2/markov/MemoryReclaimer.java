@@ -20,7 +20,6 @@ public class MemoryReclaimer extends Thread {
 		while(true) {
 			System.out.println("Free Memory: "+Runtime.getRuntime().freeMemory());
 			if(Runtime.getRuntime().freeMemory()<500000000) {
-				System.out.println("Free Memory: "+Runtime.getRuntime().freeMemory());
 				for(int i=0; i<qVec.size(); i++) {
 					qVec.get(i).lock();
 				}
@@ -28,6 +27,7 @@ public class MemoryReclaimer extends Thread {
 				((FlexCompRowMatrix)qMatrix).compact();
 				System.gc();
 				System.runFinalization();
+				System.out.println("New Free Memory: "+Runtime.getRuntime().freeMemory());
 				for(int i=0; i<qVec.size(); i++) {
 					qVec.get(i).unlock();
 				}
