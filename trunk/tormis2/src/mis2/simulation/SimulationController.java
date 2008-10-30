@@ -27,13 +27,13 @@ public class SimulationController {
 //			total2 += states.get(j)[1].getNum();
 //		}
 //		System.out.println("Total: "+total2);
-		//statesGen.printStates(states);
+		statesGen.printStates(states);
 		
 		Matrix qMatrix = new FlexCompRowMatrix(states.size(), states.size());
 		Double size = (double)states.size();
 		
 		System.out.println("size: "+size);
-		//System.exit(0);
+//		System.exit(0);
 		QMatrixGenerator q = null;
 		Vector<QMatrixGenerator> qVec = new Vector<QMatrixGenerator>();
 		Double numThread = 4.0;
@@ -64,7 +64,7 @@ public class SimulationController {
 		
 		q.printZeroQMatrix(qMatrix);
 		
-		//q.printQMatrix();
+		q.printQMatrix();
 		prob.printX(x);
 		
 		IndexCalculator index = new IndexCalculator(numJobs, states, 
