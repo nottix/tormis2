@@ -237,15 +237,16 @@ public class IndexCalculator {
 //		        	//matrix_stato_2[stato][(nodo*2)+1] >= multiserver)){ 
 //		        }
 				if(this.states.get(stato)[i].getNum()>0 /*&& this.states.get(stato)[i].getNum()>=this.capacity[i]*/){
-//					for(int d=0; d<this.states.get(stato)[i].getDest().size(); d++) {
-//						int j = this.states.get(stato)[i].getDest().get(d);
-//						if(this.states.get(stato)[j].getNum()<this.capacity[j]) {
-//							if(this.server[i]>1)
-								utilization += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
-//							else
-//								utilization += this.pi.get(stato);
-//						}
-//					}
+					for(int j=0; j<this.block.length; j++){
+						if(this.routingMatrix.get(i, j) != 0){
+							if(this.states.get(stato)[j].getNum()<this.capacity[j]) {
+//								if(this.server[i]>1)
+//								utilization += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
+//								else
+								utilization += this.pi.get(stato);
+							}
+						}
+					}
 
 				}
 		         //   Ue += (probabilita.get(stato)*Math.min(multiserver, (matrix_stato_2[stato][nodo*2] - matrix_stato_2[stato][(nodo*2)+1]))) / multiserver;
@@ -253,8 +254,9 @@ public class IndexCalculator {
 		}	// RS-RD
 		else if(block[i]==1) 
 		{
+//			for(int n=1; n<Math.min(this.capacity[i], this.numJobs); n++) {
 			for(int stato=0; stato<this.states.size(); stato++){
-				if(this.states.get(stato)[i].getNum() > 0 && this.capacity[i]>=0) {
+				if(this.states.get(stato)[i].getNum()>0) {
 		            for(int j=0; j<this.block.length; j++){
 		                if(this.routingMatrix.get(i, j) != 0){
 		                    if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
@@ -312,23 +314,23 @@ public class IndexCalculator {
 		
 		//throughput += this.serviceRate[i]*this.calcEffectiveUtilizationOf(i)*this.server[i];
 
-		if(this.capacity[i]==0 /*|| this.capacity[i]>1*/) {
+		if(this.capacity[i]==0 || this.capacity[i]>=1) {
 			//throughput = 0;
 			//throughput = this.serviceRate[i]*this.calcUtilizationOf(i);
-			
 
-            for(int stato=0; stato<this.states.size(); stato++){
-                if(states.get(stato)[i].getNum() != 0){
-                    for(int j=0; j<this.block.length; j++){
-                        if(this.routingMatrix.get(i, j) != 0){
-                            if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
-                                  double mu = this.states.get(stato)[i].getNum() * this.serviceRate[i];
-                                  throughput += mu * this.pi.get(stato) * this.routingMatrix.get(i, j);
-                             }
-                        }    
-                    }    
-                }
-            }
+
+			for(int stato=0; stato<this.states.size(); stato++) {
+				if(states.get(stato)[i].getNum() > 0) {
+					for(int j=0; j<this.block.length; j++) {
+						if(this.routingMatrix.get(i, j) != 0) {
+							if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)) { //Capacità = 0 equivale ad infinito
+								double mu = this.states.get(stato)[i].getNum() * this.serviceRate[i];
+								throughput += mu * this.pi.get(stato) * this.routingMatrix.get(i, j);
+							}
+						}    
+					}    
+				}
+			}
 		}
 		else {
 				//for(int n=1; n<this.numJobs; n++) {
@@ -389,7 +391,7 @@ public class IndexCalculator {
 	}
 
 	public double calcMeanResponseTimeOf(int i) {
-		//System.out.println("i: "+i+", throughput: "+this.calcThroughputOf(i));
+		System.out.println("i: "+i+", meanQueue: "+calcMeanQueueOf(i)+", throughput: "+this.calcThroughputOf(i));
 		return (this.calcMeanQueueOf(i) / this.calcThroughputOf(i));
 	}
 
@@ -402,7 +404,7 @@ public class IndexCalculator {
 		for(int i=0; i<this.block.length; i++){
 			for(int j=0; j<this.block.length; j++){
 				if(i!=j)
-					res.set(i, res.get(i)+responseTimes.get(j)*lookRapport.get(j, i) );
+					res.add(i, responseTimes.get(j)*lookRapport.get(j, i) );
 //				(Network.y[j+1]/Network.y[i+1]);
 			}   
 		}    
