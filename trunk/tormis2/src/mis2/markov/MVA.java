@@ -33,7 +33,7 @@ public class MVA {
 	private DenseVector U;
 	double sommaTot;
 	private String index;
-	private final int NMAX = 1;
+	private final int NMAX = 5;
 
 	public MVA(int numJobs, Matrix routingMatrix) {
 		this.numJobs = numJobs;
@@ -108,7 +108,7 @@ public class MVA {
 				}
 				//lambda[i][n-1] = (n)/(tmp);
 				throughput.set(i,n-1,n/tmp);
-				System.out.println("N: "+n+" i: "+i+" Throughput: "+throughput.get(i, n-1));
+				//System.out.println("N: "+n+" i: "+i+" Throughput: "+throughput.get(i, n-1));
 				//E_n[i][n] = lambda[i][n-1]*E[i][n-1];
 				meanQueue.set(i,n,throughput.get(i,n-1)* meanTime.get(i,n-1));
 			}

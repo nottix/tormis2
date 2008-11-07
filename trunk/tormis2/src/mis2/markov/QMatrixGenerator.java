@@ -161,55 +161,26 @@ public class QMatrixGenerator extends Thread {
 					}
 
 					this.unlock();
-					//this.yield();
 				}
 			}
-//			ready=false;
-//			sem.release();
-//			if((j%50)==0) {
-//				freeMem();
-//			}
 		}
 		System.out.println("Total: "+states.size()*states.size()+", Cond1: "+cond1+", Cond2: "+cond2+", Cond3: "+cond3+", Cond4: "+cond4+", Cond5: "+cond5+", CondZero: "+condZero+", CondDiag: "+condDiag);
-//		return this.qMatrix;
 	}
 	
 	public Matrix getQMatrix() {
 		return this.qMatrix;
 	}
 	
-//	private void freeMem() {
-//		try {
-//			sem.acquire();
-//			if(this.getName().charAt(0)=='0') {
-//				((FlexCompRowMatrix)qMatrix).compact();
-//				System.out.println("Acquired");
-////				Runtime.getRuntime().gc();
-//			}
-////			else
-//				
-////			sem.release();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
 	private boolean checkRsRdCondition1Unb() {
 
 		for(jj=0; jj<from.length; jj++) {
 			if(from[jj].getNum()>0) {
-//				System.out.println("j: "+j+", NS: "+from[j].getNsSize());
 				if(block[jj]==1 || (block[jj]==0 && from[jj].getNsSize()==0)) {
 					if(from[jj].getDest() != null) {
-//						System.out.println("dest not null block: "+block[j]);
 						for(kk=0; kk<from[jj].getDest().size(); kk++) {
 							ii = from[jj].getDestAt(kk);
-//							System.out.println("i: "+i+", num: "+from[i].getNum()+", server: "+server[i]);
 							if( (((block[ii]==0) && (from[ii].getNum()>=server[ii])) || (block[ii]==1) || (block[ii]==0 && from[ii].getNsSize()==0)) && this.compareState() ) {
-//								System.out.println((to[j].getNum()+", "+(from[j].getNum()-1)+", "+to[i].getNum()+", "+(from[i].getNum()+1)));
 								if( (to[jj].getNum()==(from[jj].getNum()-1)) && (to[ii].getNum()==(from[ii].getNum()+1)) ) {
-									//System.out.println("acc: "+this.isAccepted(from[i].getNum(), i));
 									qMatrix.set(j, i, this.getDelta(from[jj].getNum())*this.serviceRate[jj]*this.calcF(from[jj].getNum())*this.routingMatrix.get(jj, ii)*this.isAccepted(from[ii].getNum(), ii));
 									return true;
 								}
@@ -451,13 +422,13 @@ public class QMatrixGenerator extends Thread {
 	public void printQMatrix() {
 		int counter = 0;
 		for(int j=0; j<qMatrix.numRows(); j++) {
-			//System.out.print(j + ": \t");
+			System.out.print(j + ": \t");
 			for(int i=0; i<qMatrix.numColumns(); i++) {
 				if(qMatrix.get(j, i)>0.0)
 					counter++;
-				//System.out.print(qMatrix.get(j, i)+" ");
+				System.out.print(qMatrix.get(j, i)+" ");
 			}
-			//System.out.println();
+			System.out.println();
 		}
 		System.out.println("\nNot null: "+counter+"\n\n");
 	}

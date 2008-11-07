@@ -1,6 +1,8 @@
 package mis2.markov;
 
+import java.util.Iterator;
 import java.util.Vector;
+
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.Matrix;
 import mis2.util.*;
@@ -51,17 +53,17 @@ public class IndexCalculator {
 		return (n==0)? 0.0 : 1.0;
 	}
 
-//	public double calcPi(int X, int n) {
-//
-//		double total = 0.0;
-//		if(capacity[X]==0) 
-//		{
-//			for(int S=0; S<states.size(); S++) {
-//				if(states.get(S)[X].getNum() == n) {
-//					total += pi.get(S);
-//				}
-//			}
-//		}
+	public double calcPi(int X, int n) {
+
+		double total = 0.0;
+		if(capacity[X]==0) 
+		{
+			for(int S=0; S<states.size(); S++) {
+				if(states.get(S)[X].getNum() == n) {
+					total += pi.get(S);
+				}
+			}
+		}
 //		else 
 //		{
 //			for(int S=0; S<states.size(); S++) {
@@ -70,8 +72,8 @@ public class IndexCalculator {
 //				}
 //			}
 //		}
-//		return total;
-//	}
+		return total;
+	}
 
 	/**
 	 * 
@@ -177,8 +179,90 @@ public class IndexCalculator {
 //			}
 //		}
 
-		utilization = this.calcEffectiveUtilizationOf(i);
+		if(server[i]>1)
+			utilization = this.calcEffectiveUtilizationOf(i);
+		else
+			utilization = 1-this.calcEffectiveUtilizationOf(i);
+		
 		return utilization;
+	}
+	
+	/**
+     * Tale metodo prende in input l'indice i del centro e
+     * calcola l'utilizzazione eettiva del centro i 
+     */
+	private double calcUtil(int i) {
+		double ut = 0;
+		double pi = 0;
+		double pib = 0;
+		BbsState[] st;
+		if (this.server[i] == 1){ 
+			if (this.block[i] == 1) { //RS-RD
+				for(int k=0; k<this.states.size(); k++) {
+					st = this.states.get(k);
+					if (st[i].getNum() == 0) {
+						pi += this.pi.get(k);
+					}
+					else {
+						for (int j = 0; j < this.block.length; j++) {
+							if (this.routingMatrix.get(i, j) != 0) {
+								if (st[j].getNum() == this.capacity[j]) {
+									pib += (this.pi.get(k) * this.routingMatrix.get(i, j));
+								}
+							}
+						}
+					}
+				}
+				ut = (double) (1 - pi - pib);
+				return ut;
+			}
+			if (this.block[i] == 0) {
+				int l = 0;
+				for (int k=0; k<this.states.size(); k++) {
+					st = (BbsState[]) states.get(k);
+					if (st[i].getNum() == 0) {
+						pi += this.pi.get(k);
+					} else {
+						for (int j = 0; j < this.block.length; j++) {
+							if (i != j) {
+								if (this.routingMatrix.get(i, j) != 0 && (int) st[j].getNum() > 0) {
+									for(int n=0; n<st[i].getDest().size(); n++) {
+										l = st[i].getDestAt(n);
+										if (this.capacity[l-1] == st[l-1].getNum()) {
+											pib += this.pi.get(k);	
+										}
+									}
+								}
+							}
+						}
+					}
+					ut = (double) 1 - pi - pib;
+					return ut;
+				}
+			}
+		}
+		else {
+			int p,limit;
+			int nums = this.server[i];
+
+			for(int stato=0; stato<this.states.size(); stato++) {
+				ut += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
+			}
+//			for (p = 1; p < nums && p<=net.getCenter(i).getMarginal_prob_size(); p++ ){
+//			ut += p*net.getCenter(i).getMarginal_prob(p-1);
+//			}
+//			ut /= nums ;
+//			if (N<=net.getCenter(i).getCapacity())
+//			limit=N;
+//			else
+//			limit=net.getCenter(i).getCapacity();
+//			for (p = nums; p <= limit; p++  ){
+//			ut += net.getCenter(i).getMarginal_prob(p-1);
+//			}
+//			net.getCenter(i).setUtil(ut);
+			return ut;
+		}
+		return 0.0;
 	}
 
 	public double calcEffectiveUtilizationOf(int i) {
@@ -188,123 +272,59 @@ public class IndexCalculator {
 		// BBS-SO
 		if(block[i]==0) 
 		{
-			
-			
-//			for(int n=1; n<Math.min(capacity[i], numJobs); n++) {
-//				for(int z=1; z<Math.min(n, server[i]); z++) {
-//					utilization += ((double)z/(double)server[i])*
-//					this.calcZeta(i, n, z);
-//				}
-//			}
-			
-//			for(int n=0; n<stati.size(); n++){
-//				if(i==6){
-//					if((((int[])((Vector)stati.get(n)).get(i))[0]!=0)|| (((Integer)((Vector)stati.get(n)).get(7)).intValue()==Network.queueCapacity[8]))
-//						ris=ris+((probQLengthDistribution[n]*((int[])((Vector)stati.get(n)).get(i))[1])/Network.numServenti[i+1]);
-//				}
-//				else{
-//					if((((int[])((Vector)stati.get(n)).get(i))[0]==0) || (((Integer)((Vector)stati.get(n)).get(5)).intValue()==Network.queueCapacity[6]))
-//						ris=ris+probQLengthDistribution[n];
-//				}
-//			}
-//			if(i==6){
-//				res[i]=ris;
-//			}
-//			else
-//				res[i]=1-ris;
-			
-			for(int stato=0; stato<this.states.size(); stato++){
-//				if(server[i]>1) {
-//					if(this.states.get(stato)[i].getNum()!=0 || this.states.get(stato)[i].getNum()==this.capacity[i]) {
-//						utilization += this.pi.get(stato)*this.states.get(stato)[i].getNum()/this.server[i];
-//					}
-//				}
-//				else if(this.states.get(stato)[i].getNum()==0 || this.states.get(stato)[i].getNum()==this.capacity[i]) {
-//					utilization += this.pi.get(stato);
-//				}
-					
-//				if(this.states.get(stato)[i].getNum()>0 && this.states.get(stato)[i].getNum()<this.capacity[i]) {
-//					for(int d=0; d<this.states.get(stato)[i].getDest().size(); d++) {
-//						int j = this.states.get(stato)[i].getDest().get(d);
-//						if(this.states.get(stato)[j].getNum()<this.capacity[j]) {
-//							if(this.server[i]>1)
-//								utilization += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
-//							else
-//								utilization += this.pi.get(stato);
-////						}
-////					}
-//
-//		        	//matrix_stato_2[stato][(nodo*2)+1] >= multiserver)){ 
-//		        }
-				if(this.states.get(stato)[i].getNum()>0 /*&& this.states.get(stato)[i].getNum()>=this.capacity[i]*/){
-					for(int j=0; j<this.block.length; j++){
-						if(this.routingMatrix.get(i, j) != 0){
-							if(this.states.get(stato)[j].getNum()<this.capacity[j]) {
-//								if(this.server[i]>1)
-//								utilization += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
-//								else
-								utilization += this.pi.get(stato);
-							}
-						}
-					}
+			for(int ni=1; ni<=Math.min(capacity[i], this.numJobs); ni++) {
+				for(double zi=1.0; zi<=Math.min(ni, server[i]); zi++) {
+					for(int stato=0; stato<this.states.size(); stato++){
+//						if(this.states.get(stato)[i].getNum()>0 /*&& this.states.get(stato)[i].getNum()>=this.capacity[i]*/){
+//							for(int j=0; j<this.block.length; j++) {
+//								if(this.routingMatrix.get(i, j) != 0) {
+//									if(this.states.get(stato)[j].getNum()> 0) {
+//										for(int n=0; n<this.states.get(stato)[i].getDest().size(); n++) {
+//											int k = this.states.get(stato)[i].getDestAt(n);
+//											if (this.capacity[k] == this.states.get(stato)[k].getNum()) {
+//												utilization += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
+//											}
+//										}
+//									}
+//									else
+//										utilization += this.pi.get(stato);
+//								}
+//							}
 
+//						System.out.println("ni: "+ni+", n: "+this.states.get(stato)[i].getNum()+", zi: "+zi+", z: "+Math.min(ni, server[i])+", "+this.pi.get(stato)+", "+(zi/server[i]));
+						if(ni==this.states.get(stato)[i].getNum() && zi==Math.min(ni, server[i])) {
+							utilization += this.pi.get(stato)*(zi/server[i]);
+						}
+//						System.out.println("Utilization of "+i+": "+utilization);
+					}
 				}
-		         //   Ue += (probabilita.get(stato)*Math.min(multiserver, (matrix_stato_2[stato][nodo*2] - matrix_stato_2[stato][(nodo*2)+1]))) / multiserver;
-		    }
+			}
 		}	// RS-RD
 		else if(block[i]==1) 
 		{
-//			for(int n=1; n<Math.min(this.capacity[i], this.numJobs); n++) {
-			for(int stato=0; stato<this.states.size(); stato++){
-				if(this.states.get(stato)[i].getNum()>0) {
-		            for(int j=0; j<this.block.length; j++){
-		                if(this.routingMatrix.get(i, j) != 0){
-		                    if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
-		                                utilization += pi.get(stato) * this.routingMatrix.get(i, j);
-		                    }
-		                }
-		            }
-		        }
-//				else if(this.states.get(stato)[i].getNum()>0 && this.capacity[i]>0){
-////				else if(this.states.get(stato)[i].getNum()>0 && this.states.get(stato)[i].getNum()>=this.capacity[i]){
-//					for(int d=0; d<this.states.get(stato)[i].getDest().size(); d++) {
-//						int j = this.states.get(stato)[i].getDest().get(d);
-//						if(this.routingMatrix.get(i, j) != 0){
-//							utilization += this.pi.get(stato)*this.routingMatrix.get(i, j);
-//						}
-//						else
-//							utilization += this.pi.get(stato);
-////						if(this.states.get(stato)[j].getNum()<this.capacity[j]) {
-////							if(this.server[i]>1)
-////								utilization += this.pi.get(stato)*Math.min(this.states.get(stato)[i].getNum(), this.server[i])/this.server[i];
-////							else
-////								utilization += this.pi.get(stato);
-////						}
+			for(int k=1; k<=Math.min(capacity[i], this.numJobs); k++) {
+				for(int stato=0; stato<this.states.size(); stato++){
+					if(this.states.get(stato)[i].getNum()==k) {
+//					if(this.states.get(stato)[i].getNum()>0) {
+						for(int j=0; j<this.block.length; j++){
+							if(this.routingMatrix.get(i, j) != 0){
+								//if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)){ //Capacità = 0 equivale ad infinito
+//								System.out.println("i: "+i+", "+pi.get(stato)+", "+this.routingMatrix.get(i, j)+", "+(Math.min(k, this.server[i])/this.server[i]));
+								if(this.states.get(stato)[j].getNum() < this.capacity[j] || capacity[j]==0) {
+									utilization += pi.get(stato) * this.routingMatrix.get(i, j)*((double)Math.min(k, this.server[i])/this.server[i]);
+								}
+								else if(this.capacity[i]==0)
+									utilization += pi.get(stato) * this.routingMatrix.get(i, j);
+							}
+						}
+					}
+//					else {
+//						utilization += this.pi.get(stato);
 //					}
-//
-//				}
-
-		    }
-			
-			
-//			double nested = 0.0;
-//			for(int k=1; k<Math.min(capacity[i], numJobs); k++) {
-//				for(int n=0; n<this.states.size(); n++) {
-//					if(this.states.get(n)[i].getNum() == k) {
-//						for(int j=0; j<capacity.length; j++) {
-//							if(this.states.get(n)[j].getNum() < capacity[j])
-//								nested += this.pi.get(n)*
-//								this.routingMatrix.get(i, j);
-//						}
-//					}
-//				}
-//				utilization += ((double)Math.min(k, server[i])/(double)server[i])
-//				*nested;
-//				nested = 0.0;
-//			}
+				}
+			}
+//			System.out.println("Utilization of "+i+": "+utilization);
 		}
-		//System.out.println("I: "+i+", U"+utilization);
-
 		return utilization;
 	}
 
@@ -314,28 +334,28 @@ public class IndexCalculator {
 		
 		//throughput += this.serviceRate[i]*this.calcEffectiveUtilizationOf(i)*this.server[i];
 
-		if(this.capacity[i]==0 || this.capacity[i]>=1) {
+		if(this.capacity[i]==0 /*|| this.capacity[i]==1*/) {
 			//throughput = 0;
-			//throughput = this.serviceRate[i]*this.calcUtilizationOf(i);
+			throughput = this.serviceRate[i]*this.calcUtilizationOf(i)*this.numJobs;
 
 
-			for(int stato=0; stato<this.states.size(); stato++) {
-				if(states.get(stato)[i].getNum() > 0) {
-					for(int j=0; j<this.block.length; j++) {
-						if(this.routingMatrix.get(i, j) != 0) {
-							if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)) { //Capacità = 0 equivale ad infinito
-								double mu = this.states.get(stato)[i].getNum() * this.serviceRate[i];
-								throughput += mu * this.pi.get(stato) * this.routingMatrix.get(i, j);
-							}
-						}    
-					}    
-				}
-			}
+//			for(int stato=0; stato<this.states.size(); stato++) {
+//				if(states.get(stato)[i].getNum() > 0) {
+//					for(int j=0; j<this.block.length; j++) {
+//						if(this.routingMatrix.get(i, j) != 0) {
+//							if(!(this.states.get(stato)[j].getNum() >= this.capacity[j] && this.capacity[j] > 0)) { //Capacità = 0 equivale ad infinito
+//								double mu = this.states.get(stato)[i].getNum() * this.serviceRate[i];
+//								throughput += mu * this.pi.get(stato) * this.routingMatrix.get(i, j);
+//							}
+//						}    
+//					}    
+//				}
+//			}
 		}
 		else {
 				//for(int n=1; n<this.numJobs; n++) {
 					//throughput += ((double)this.serviceRate[i])*this.calcF(n)*this.calcZeta(i, n, 1);
-					throughput += this.serviceRate[i]*this.calcEffectiveUtilizationOf(i)*this.server[i];
+					throughput = this.serviceRate[i]*this.calcEffectiveUtilizationOf(i)*this.server[i];
 				//}
 				//for(int n=1; n<this.numJobs; n++) {
 					//for(int z=1; z<this.numJobs; z++) {
@@ -391,7 +411,7 @@ public class IndexCalculator {
 	}
 
 	public double calcMeanResponseTimeOf(int i) {
-		System.out.println("i: "+i+", meanQueue: "+calcMeanQueueOf(i)+", throughput: "+this.calcThroughputOf(i));
+//		System.out.println("i: "+i+", meanQueue: "+calcMeanQueueOf(i)+", throughput: "+this.calcThroughputOf(i));
 		return (this.calcMeanQueueOf(i) / this.calcThroughputOf(i));
 	}
 
