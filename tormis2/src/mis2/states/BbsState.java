@@ -94,6 +94,14 @@ public class BbsState {
 	public int getNum() {
 		return state[0];
 	}
+	
+	public int getZ() {
+		int z = 0;
+		for(int s=0; s<this.dest.size(); s++) {
+			z += this.getDestAt(s);
+		}
+		return z;
+	}
 
 	public int getNS(int iNode) {
 		if(iNode+1>=state.length) {
