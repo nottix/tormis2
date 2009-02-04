@@ -23,7 +23,6 @@ public class MVA {
 
 	private int M;    //n centri
 	private int numJobs;    //n job
-	private int NUM_JOB;          // Numero di jobs nella rete
 	private Matrix meanQueue;          //popolazione media
 	private Matrix rapVisite;   //rapporto tra le visite
 	private Matrix meanTime;          //tempo di risp
@@ -33,7 +32,6 @@ public class MVA {
 	private DenseVector U;
 	double sommaTot;
 	private String index;
-	private final int NMAX = 5;
 
 	public MVA(int numJobs, Matrix routingMatrix) {
 		this.numJobs = numJobs;
@@ -48,7 +46,8 @@ public class MVA {
 		this.globalMeanQueue = new DenseVector(M);
 		rapVisite= new DenseMatrix(M,M);   //rapporto tra le visite
 		this.rapVisite = new Gauss(this.routingMatrix).getRapVisite();
-		for(int ni=1;ni<=NMAX;ni++){   
+		System.out.println("MVA\n");
+		for(int ni=this.numJobs;ni<=this.numJobs;ni++){   
 			index += "\tN = " + ni + " --> " ;
 			setVariables(ni);
 			makeMVA();
@@ -61,13 +60,13 @@ public class MVA {
 	 * @param N Numero di job della rete
 	 */
 	private void setVariables(int N){
-		this.NUM_JOB = N;
-		// E = new float[M][NUM_JOB];
-		meanTime= new DenseMatrix(M,NUM_JOB);          //tempo di risp
-		//lambda = new float[ncentri][NUM_JOB];
-		throughput= new DenseMatrix(M,NUM_JOB);       //througput
-		//  E_n = new float[ncentri][NUM_JOB+1];
-		meanQueue= new DenseMatrix(M,NUM_JOB+1);  
+		this.numJobs = N;
+		// E = new float[M][numJobs];
+		meanTime= new DenseMatrix(M,numJobs);          //tempo di risp
+		//lambda = new float[ncentri][numJobs];
+		throughput= new DenseMatrix(M,numJobs);       //througput
+		//  E_n = new float[ncentri][numJobs+1];
+		meanQueue= new DenseMatrix(M,numJobs+1);  
 	}
 
 	/**
@@ -77,13 +76,14 @@ public class MVA {
 
 		double appoggio=0;
 
-		for(int n=1; n<=NUM_JOB; n++){
+		for(int n=1; n<=numJobs; n++){
 			// Vado a ciclare sui jobs
 			for(int i=0; i<M; i++){
-				if(i==0)
+				if(i==0) {
 					//E[i][n-1] = ts[i];
 					meanTime.set(i,n-1,ts[i]);
-				else if(i==6){  // Caso in cui il centro sia multiservente
+				}
+				else if(i==6) {  // Caso in cui il centro sia multiservente
 					//	appoggio = Math.ceil(E_n[i][n-1]);
 					appoggio = Math.ceil(meanQueue.get(i,n-1));
 					if(appoggio <= 0){
@@ -92,9 +92,10 @@ public class MVA {
 					// E[i][n-1] = (float) (Double.valueOf(E_tsi[i] / Math.min(appoggio, 3)) * (Math.max(E_n[i][n - 1] - 2, 0)) + E_tsi[i]);
 					meanTime.set(i,n-1,(float) (Double.valueOf(ts[i] / Math.min(appoggio, 3)) * (Math.max( meanQueue.get(i,n - 1) - 2, 0)) + ts[i]));        
 				}
-				else
+				else {
 					// Vado a ciclare sui centri
 					meanTime.set(i,n-1, ts[i]*(1+meanQueue.get(i,n-1)));
+				}
 
 				//System.out.println("N: "+n+" i: "+i+" MeanTime: "+meanTime.get(i, n-1));
 			}
@@ -108,7 +109,7 @@ public class MVA {
 				}
 				//lambda[i][n-1] = (n)/(tmp);
 				throughput.set(i,n-1,n/tmp);
-				//System.out.println("N: "+n+" i: "+i+" Throughput: "+throughput.get(i, n-1));
+				//System.out.println("X["+i+"]: "+throughput.get(i, n-1));
 				//E_n[i][n] = lambda[i][n-1]*E[i][n-1];
 				meanQueue.set(i,n,throughput.get(i,n-1)* meanTime.get(i,n-1));
 			}
@@ -125,24 +126,31 @@ public class MVA {
 
 		for(int i=0 ; i<this.M; i++){
 			this.U = new DenseVector(M);
-			//  U[i] = this.lambda[i][this.NUM_JOB-1] * E_tsi[i];
-			U.set(i,this.throughput.get(i,this.NUM_JOB-1) * ts[i]);
+			//  U[i] = this.lambda[i][this.numJobs-1] * E_tsi[i];
+			U.set(i,this.throughput.get(i,this.numJobs-1) * ts[i]);
+			System.out.println("U["+i+"]: "+U.get(i));
 
 		}
+		System.out.println();
 
 		for(int i=0; i<this.M; i++){
 			globalMeanTime.set(i,0.0);
 			for(int j=0; j<this.M; j++){
 				if(i!=j){
-					globalMeanTime.set(i,globalMeanTime.get(i)+ rapVisite.get(j,i)* meanTime.get(j,this.NUM_JOB-1));
+					globalMeanTime.set(i,globalMeanTime.get(i)+ rapVisite.get(j,i)* meanTime.get(j,this.numJobs-1));
 				}
 			}
-
+			System.out.println("T["+i+"]: "+globalMeanTime.get(i));
 		}
+		System.out.println();
+		
 		for(int i=0; i<this.M; i++){
-			globalMeanQueue.set(i,globalMeanTime.get(i)+meanTime.get(i,this.NUM_JOB-1));
+			globalMeanQueue.set(i,globalMeanTime.get(i)+meanTime.get(i,this.numJobs-1));
+			System.out.println("L["+i+"]: "+globalMeanQueue.get(i));
 		}
+		System.out.println();
 
+		System.out.println("Tr[0]: "+globalMeanTime.get(0));
 		index += ""+globalMeanTime.get(0) + "\n";
 		save2file();
 	}

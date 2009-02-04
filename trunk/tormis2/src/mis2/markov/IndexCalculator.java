@@ -71,7 +71,7 @@ public class IndexCalculator {
 //					}
 				//	System.out.println("MATH: "+this.pi.get(stato)*(double)Math.min(this.states.get(stato)[i].getNum(), this.server[i])/((double)this.server[i]));
 					//System.out.println("DEST: "+this.states.get(stato)[i].getZ());
-					utilization += this.pi.get(stato)*(double)Math.min(this.states.get(stato)[i].getNum(), this.server[i])/((double)this.server[i]);
+					utilization += this.pi.get(stato)*((double)Math.min(this.states.get(stato)[i].getNum(), this.server[i]))/((double)this.server[i]);
 				}
 			}
 		}	// RS-RD
@@ -80,8 +80,8 @@ public class IndexCalculator {
 			if(capacity[i]==0) {
 				for(int stato=0; stato<this.states.size(); stato++) {
 					for(int j=0; j<this.block.length; j++) {
-						if(this.states.get(stato)[i].getNum() > 0 && (this.routingMatrix.get(i, j) > 0) && this.states.get(stato)[j].getNum()<this.capacity[j]) {
-//							System.out.println("NUM: "+(1/(double)this.numJobs));
+						if((this.states.get(stato)[i].getNum() > 0) && (this.routingMatrix.get(i, j) > 0) && (this.states.get(stato)[j].getNum()<this.capacity[j])) {
+							//System.out.println("Util["+i+"]: "+utilization);
 							utilization += (Math.min(this.states.get(stato)[i].getNum(), this.numJobs)/(double)this.numJobs)*pi.get(stato)*this.routingMatrix.get(i, j);
 						}
 					}
@@ -156,7 +156,8 @@ public class IndexCalculator {
 		for(int i=0; i<this.block.length; i++){
 			for(int j=0; j<this.block.length; j++){
 				if(i!=j) {
-				//	System.out.println("RESPTIME "+j+" :"+responseTimes.get(j));
+//					if(i==0)
+//						System.out.println("RESPTIME: "+lookRapport.get(j, i));
 					res.add(i, responseTimes.get(j)*lookRapport.get(j, i) );
 				}
 //				(Network.y[j+1]/Network.y[i+1]);
