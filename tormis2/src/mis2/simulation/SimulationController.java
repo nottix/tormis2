@@ -81,8 +81,9 @@ public class SimulationController {
 			System.out.println("\tL"+i+": "+index.calcMeanQueueOf(i));
 			System.out.println("\tT"+i+": "+index.calcMeanResponseTimeOf(i));
 		}
-		System.out.println("\tTr: "+index.centerResponseTime(index.getTotT(), new Gauss(routing.getRoutingMatrix()).getRapVisite()));
-		
+		System.out.println();
+		DenseVector resTime = index.centerResponseTime(index.getTotT(), new Gauss(routing.getRoutingMatrix()).getRapVisite());
+		System.out.println("\tTr[0]: "+resTime.get(0));
 //		System.out.println("\n\ttotal: "+total);
 //                System.out.println();
                 
