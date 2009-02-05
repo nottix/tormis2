@@ -1,5 +1,6 @@
 package mis2.markov;
 
+import java.util.Date;
 import java.util.Vector;
 import no.uib.cipr.matrix.*;
 import no.uib.cipr.matrix.sparse.*;
@@ -82,7 +83,9 @@ public class QMatrixGenerator extends Thread {
 
 	/* Formula di Pacini */
 	private int isAccepted(int n, int i) {
-		if(n<=capacity[i])
+		if(capacity[i]==0)
+			return 1;
+		else if(n<=capacity[i])
 			return 1;
 		else
 			return 0;
@@ -108,7 +111,7 @@ public class QMatrixGenerator extends Thread {
 				System.out.println(this.getName()+" -> Status(size: "+states.size()+"): "+j+" of "+this.endRow+", "+(((double)(j-this.startRow)/(double)(this.endRow-this.startRow))*100)+"%");
 			for(i=this.startCol; i<states.size() && i<this.endCol; i++) {       // i - colon
 
-				if(i!=j/* && i==1 && j==0*/) {
+				if(i!=j /*&& i==0 && j==2*/) {
 					this.lock();
 					from = states.get(j);
 					to = states.get(i);
@@ -179,9 +182,12 @@ public class QMatrixGenerator extends Thread {
 					if(from[jj].getDest() != null) {
 						for(kk=0; kk<from[jj].getDest().size(); kk++) {
 							ii = from[jj].getDestAt(kk);
-							if( (((block[ii]==0) && (from[ii].getNum()>=server[ii])) || (block[ii]==1) || (block[ii]==0 && from[ii].getNsSize()==0)) && this.compareState() ) {
-								if( (to[jj].getNum()==(from[jj].getNum()-1)) && (to[ii].getNum()==(from[ii].getNum()+1)) ) {
+							if( ((block[ii]==1) || (block[ii]==0 && from[ii].getNsSize()==0)) && this.compareState() ) {
+								if( ((to[jj].getNum()==(from[jj].getNum()-1)) && (to[ii].getNum()==(from[ii].getNum()+1))) || ((to[jj].getNum()==(from[jj].getNum())) && (to[ii].getNum()==(from[ii].getNum())))) {
 									qMatrix.set(j, i, this.getDelta(from[jj].getNum())*this.serviceRate[jj]*this.calcF(from[jj].getNum())*this.routingMatrix.get(jj, ii)*this.isAccepted(from[ii].getNum(), ii));
+									//System.out.println(this.getDelta(from[jj].getNum())+", "+this.serviceRate[jj]+", "+this.calcF(from[jj].getNum())+", "+this.routingMatrix.get(jj, ii)+", "+this.isAccepted(from[ii].getNum(), ii));
+									if(qMatrix.get(j, i)==0)
+										System.out.println("ZEROOOO at: "+j+", "+i);
 									return true;
 								}
 							}
